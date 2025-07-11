@@ -235,7 +235,7 @@ export const AdminDashboard: React.FC = () => {
             </div>
           </div>
           <h1 className="text-4xl lg:text-5xl font-bold text-white mb-4 bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
-            Review Cards Dashboard
+            Auto Review Cards Dashboard
           </h1>
           <p className="text-slate-300">
             {connectionStatus === 'connected' 
