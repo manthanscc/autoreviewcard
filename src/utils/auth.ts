@@ -1,7 +1,7 @@
 const AUTH_KEY = 'review_admin_auth';
 const FIXED_CREDENTIALS = {
   mobile: '9974361416',
-  password: 'scc123'
+  password: 'Scc#99743*/*61416&V/Y@'
 };
 
 export const auth = {
