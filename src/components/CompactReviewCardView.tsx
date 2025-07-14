@@ -55,24 +55,30 @@ export const CompactReviewCardView: React.FC<CompactReviewCardViewProps> = ({ ca
       const ua = navigator.userAgent;
       const isAndroid = /Android/i.test(ua);
       const isIOS = /iPhone|iPad|iPod/i.test(ua);
-      if ((isAndroid || isIOS) && card.location) {
+      // Use company location from card.googleMapsUrl if available, else fallback to card.location
+      const mapQuery = card.googleMapsUrl ? card.googleMapsUrl : card.location || '';
+      if ((isAndroid || isIOS) && mapQuery) {
         if (isAndroid) {
           // Use intent:// for Android
-          const intentUrl = `intent://maps.google.com/maps?q=${encodeURIComponent(card.location)}#Intent;scheme=https;package=com.google.android.apps.maps;end`;
+          const intentUrl = card.googleMapsUrl
+            ? `intent://${card.googleMapsUrl.replace(/^https?:\/\//, '')}#Intent;scheme=https;package=com.google.android.apps.maps;end`
+            : `geo:0,0?q=${encodeURIComponent(card.location || '')}`;
           window.location.href = intentUrl;
           setTimeout(() => {
-            window.location.href = card.googleMapsUrl;
+            window.location.href = card.googleMapsUrl ? card.googleMapsUrl : `https://maps.google.com/?q=${encodeURIComponent(card.location || '')}`;
           }, 1500); // fallback after 1.5s
         } else if (isIOS) {
           // Use comgooglemaps:// for iOS
-          const iosUrl = `comgooglemaps://?q=${encodeURIComponent(card.location)}`;
+          const iosUrl = card.googleMapsUrl
+            ? `comgooglemaps://?q=${encodeURIComponent(card.googleMapsUrl)}`
+            : `comgooglemaps://?q=${encodeURIComponent(card.location || '')}`;
           window.location.href = iosUrl;
           setTimeout(() => {
-            window.location.href = card.googleMapsUrl;
+            window.location.href = card.googleMapsUrl ? card.googleMapsUrl : `https://maps.google.com/?q=${encodeURIComponent(card.location || '')}`;
           }, 1500); // fallback after 1.5s
         }
       } else {
-        window.location.href = card.googleMapsUrl;
+        window.location.href = card.googleMapsUrl ? card.googleMapsUrl : `https://maps.google.com/?q=${encodeURIComponent(card.location || '')}`;
       }
     } catch (err) {
       console.error('Failed to copy text: ', err);
