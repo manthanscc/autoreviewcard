@@ -50,7 +50,21 @@ export const CompactReviewCardView: React.FC<CompactReviewCardViewProps> = ({ ca
       await navigator.clipboard.writeText(currentReview);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
-      window.location.href = card.googleMapsUrl;
+
+      // Mobile deep link logic
+      const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+      if (isMobile && card.location) {
+        // Try geo: for Android, comgooglemaps: for iOS
+        const geoUrl = `geo:0,0?q=${encodeURIComponent(card.location)}`;
+        const iosUrl = `comgooglemaps://?q=${encodeURIComponent(card.location)}`;
+        // Try both, fallback to normal link
+        window.location.href = /iPhone|iPad|iPod/i.test(navigator.userAgent) ? iosUrl : geoUrl;
+        setTimeout(() => {
+          window.location.href = card.googleMapsUrl;
+        }, 1500); // fallback after 1.5s
+      } else {
+        window.location.href = card.googleMapsUrl;
+      }
     } catch (err) {
       console.error('Failed to copy text: ', err);
     }
