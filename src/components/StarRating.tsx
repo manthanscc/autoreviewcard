@@ -22,25 +22,29 @@ export const StarRating: React.FC<StarRatingProps> = ({
 
   return (
     <div className="flex gap-1">
-      {[1, 2, 3, 4, 5].map((star) => (
-        <button
-          key={star}
-          type="button"
-          onClick={() => interactive && onRatingChange(star)}
-          disabled={!interactive}
-          className={`${sizeClasses[size]} transition-all duration-200 ${
-            interactive ? 'hover:scale-110 cursor-pointer' : 'cursor-default'
-          }`}
-        >
-          <Star
-            className={`w-full h-full transition-colors duration-200 ${
-              star <= rating
-                ? 'text-yellow-400 fill-yellow-400'
-                : 'text-gray-300'
+      {[1, 2, 3, 4, 5].map((star) => {
+        const isSelectable = star === 4 || star === 5;
+        return (
+          <button
+            key={star}
+            type="button"
+            onClick={() => interactive && isSelectable && onRatingChange(star)}
+            disabled={!interactive || !isSelectable}
+            className={`${sizeClasses[size]} transition-all duration-200 ${
+              interactive && isSelectable ? 'hover:scale-110 cursor-pointer' : 'cursor-default opacity-60'
             }`}
-          />
-        </button>
-      ))}
+            aria-label={isSelectable ? `Select ${star} star` : `Not selectable`}
+          >
+            <Star
+              className={`w-full h-full transition-colors duration-200 ${
+                star <= rating
+                  ? 'text-yellow-400 fill-yellow-400'
+                  : 'text-gray-300'
+              }`}
+            />
+          </button>
+        );
+      })}
     </div>
   );
 };

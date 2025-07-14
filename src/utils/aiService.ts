@@ -52,8 +52,8 @@ Sentiment: ${sentimentGuide[starRating as keyof typeof sentimentGuide]}
 ${highlights ? `Customer highlights: ${highlights}` : ''}
 
 Requirements:
-- Write 2-5 sentences maximum
-- Sound natural and human-like
+- Write 2-6 sentences maximum
+- Sound natural, human-like, simple language
 - Match the ${starRating}-star sentiment exactly
 - Be specific to the business type (${type})
 - Use realistic customer language
