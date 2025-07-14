@@ -24,7 +24,19 @@ export class AIReviewService {
     }
 
     const { businessName, category, type, highlights, starRating } = request;
-    
+
+    // Language combinations
+    const languageCombos = [
+      { label: 'English', prompt: 'Write the review in English.' },
+      { label: 'Gujarati', prompt: 'Write the review in Gujarati.' },
+      { label: 'Hindi', prompt: 'Write the review in Hindi.' },
+      // { label: 'English + Gujarati', prompt: 'Write the review in English and Gujarati, mixing both languages naturally.' },
+      // { label: 'English + Hindi', prompt: 'Write the review in English and Hindi, mixing both languages naturally.' },
+      // { label: 'Hindi + Gujarati', prompt: 'Write the review in Hindi and Gujarati, mixing both languages naturally.' }
+    ];
+    // Pick a random language combination
+    const randomCombo = languageCombos[Math.floor(Math.random() * languageCombos.length)];
+
     const sentimentGuide = {
       1: "Very negative, expressing frustration and dissatisfaction with specific issues",
       2: "Below average experience, mentioning problems but being constructive",
@@ -49,6 +61,7 @@ Requirements:
 - Don't mention the star rating in the text
 ${highlights ? `- Try to incorporate these highlights naturally: ${highlights}` : ''}
 
+${randomCombo.prompt}
 Return only the review text, no quotes or extra formatting.`;
 
     try {

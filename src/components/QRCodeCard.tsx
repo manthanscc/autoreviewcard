@@ -515,7 +515,7 @@ export const QRCodeCard: React.FC<QRCodeCardProps> = ({ card }) => {
               <div className="relative bg-white rounded-2xl p-8 shadow-xl">
                 <QRCode
                   value={qrUrl}
-                  size={350}
+                  size={50}
                   style={{ height: "auto", maxWidth: "100%", width: "100%" }}
                   viewBox="0 0 256 256"
                   fgColor="#000000"
