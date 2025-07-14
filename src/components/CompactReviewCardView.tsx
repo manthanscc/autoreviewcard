@@ -51,17 +51,26 @@ export const CompactReviewCardView: React.FC<CompactReviewCardViewProps> = ({ ca
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
 
-      // Mobile deep link logic
-      const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-      if (isMobile && card.location) {
-        // Try geo: for Android, comgooglemaps: for iOS
-        const geoUrl = `geo:0,0?q=${encodeURIComponent(card.location)}`;
-        const iosUrl = `comgooglemaps://?q=${encodeURIComponent(card.location)}`;
-        // Try both, fallback to normal link
-        window.location.href = /iPhone|iPad|iPod/i.test(navigator.userAgent) ? iosUrl : geoUrl;
-        setTimeout(() => {
-          window.location.href = card.googleMapsUrl;
-        }, 1500); // fallback after 1.5s
+      // Improved mobile deep link logic
+      const ua = navigator.userAgent;
+      const isAndroid = /Android/i.test(ua);
+      const isIOS = /iPhone|iPad|iPod/i.test(ua);
+      if ((isAndroid || isIOS) && card.location) {
+        if (isAndroid) {
+          // Use intent:// for Android
+          const intentUrl = `intent://maps.google.com/maps?q=${encodeURIComponent(card.location)}#Intent;scheme=https;package=com.google.android.apps.maps;end`;
+          window.location.href = intentUrl;
+          setTimeout(() => {
+            window.location.href = card.googleMapsUrl;
+          }, 1500); // fallback after 1.5s
+        } else if (isIOS) {
+          // Use comgooglemaps:// for iOS
+          const iosUrl = `comgooglemaps://?q=${encodeURIComponent(card.location)}`;
+          window.location.href = iosUrl;
+          setTimeout(() => {
+            window.location.href = card.googleMapsUrl;
+          }, 1500); // fallback after 1.5s
+        }
       } else {
         window.location.href = card.googleMapsUrl;
       }
