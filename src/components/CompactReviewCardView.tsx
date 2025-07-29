@@ -395,7 +395,13 @@ export const CompactReviewCardView: React.FC<CompactReviewCardViewProps> = ({
           </div>
 
           {/* AI Powered Branding */}
-          <div className="flex flex-row items-center justify-center mt-5 mb-2 gap-3">
+          <a
+            href="https://sccinfotech.com/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex flex-row items-center justify-center mt-5 mb-2 gap-3 cursor-pointer hover:opacity-80 transition-opacity duration-200"
+            title="Visit SCC INFOTECH LLP website"
+          >
             <img
               src="/scc.png"
               alt="SCC Logo"
@@ -409,7 +415,7 @@ export const CompactReviewCardView: React.FC<CompactReviewCardViewProps> = ({
                 SCC INFOTECH LLP
               </span>
             </div>
-          </div>
+          </a>
 
           {/* Instructions */}
           <div className="mt-8 p-5 bg-gradient-to-r from-blue-50 to-purple-50 rounded-2xl border-2 border-blue-100">
