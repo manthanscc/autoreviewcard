@@ -350,7 +350,7 @@ export const QRCodeCard: React.FC<QRCodeCardProps> = ({ card }) => {
       <div className="fixed -top-[9999px] left-0 pointer-events-none">
         <div
           ref={downloadCardRef}
-          className={`w-[500px] h-[800px] ${theme.cardBg} rounded-[2rem] p-10 shadow-2xl relative overflow-hidden`}
+          className={`w-[500px] h-[800px] ${theme.cardBg} rounded-[2rem] p-5 shadow-2xl relative overflow-hidden`}
           style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}
         >
           {/* Background Pattern for Download Card */}
@@ -359,7 +359,7 @@ export const QRCodeCard: React.FC<QRCodeCardProps> = ({ card }) => {
           </div>
           
           {/* Header Section */}
-          <div className="relative z-10 text-center mb-8">
+          <div className="relative z-10 text-center mb-4">
             {/* Business Logo and Info Side by Side */}
             <div className="flex items-center justify-between mb-6">
               {/* Business Logo - Left Side */}
@@ -381,10 +381,10 @@ export const QRCodeCard: React.FC<QRCodeCardProps> = ({ card }) => {
               
               {/* Business Info - Right Side */}
               <div className={`flex-1 ${card.logoUrl ? 'ml-6' : ''} text-left`}>
-                <h1 className={`text-2xl font-bold ${theme.cardText} mb-2 leading-tight`}>
+                <h1 className={`text-2xl font-bold ${theme.cardText} mb-1 leading-tight`}>
                   {card.businessName}
                 </h1>
-                <p className={`text-xl ${theme.cardText} opacity-80 mb-2`}>
+                <p className={`text-lg ${theme.cardText} opacity-80 mb-1`}>
                   {card.type}
                 </p>
                 {card.location && (
@@ -397,24 +397,24 @@ export const QRCodeCard: React.FC<QRCodeCardProps> = ({ card }) => {
             </div>
             
             {/* Enhanced Star Rating */}
-            <div className="flex justify-center mb-6">
+            <div className="flex justify-center mb-2">
               {[...Array(5)].map((_, i) => (
                 <Star key={i} className="w-8 h-8 text-yellow-500 fill-yellow-500 mx-1 drop-shadow-lg" />
               ))}
             </div>
             
-            <h2 className={`text-2xl font-bold ${theme.cardText} mb-4`}>
+            <h2 className={`text-lg font-bold ${theme.cardText} mb-3`}>
               Share Your Experience
             </h2>
           </div>
 
           {/* Enhanced QR Code Section */}
-          <div className="relative z-10 flex justify-center mb-10">
+          <div className="relative z-10 flex justify-center mb-6">
             <div className="bg-white rounded-3xl p-8 shadow-2xl border-4 border-gray-100">
               <div className="relative">
                 <QRCode
                   value={qrUrl}
-                  size={240}
+                  size={200}
                   style={{ height: "auto", maxWidth: "100%", width: "100%" }}
                   viewBox="0 0 256 256"
                   fgColor="#000000"
@@ -446,31 +446,28 @@ export const QRCodeCard: React.FC<QRCodeCardProps> = ({ card }) => {
           <div className="relative z-10 text-center">
             
             
-            <div className="grid grid-cols-3 gap-4 mb-6">
+            <div className="grid grid-cols-3 gap-4 mb-4">
               <div className="text-center">
-                <div className="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center mx-auto mb-2 shadow-lg">
-                  <Smartphone className="w-6 h-6 text-white" />
+                <div className="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center mx-auto shadow-lg">
+                  <Smartphone className="w-5 h-5 text-white" />
                 </div>
                 <p className={`text-sm ${theme.cardText} font-semibold`}>Open Camera</p>
               </div>
               <div className="text-center">
-                <div className="w-12 h-12 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-2 shadow-lg">
-                  <QrCode className="w-6 h-6 text-white" />
+                <div className="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center mx-auto shadow-lg">
+                  <QrCode className="w-5 h-5 text-white" />
                 </div>
                 <p className={`text-sm ${theme.cardText} font-semibold`}>Scan QR Code</p>
               </div>
               <div className="text-center">
-                <div className="w-12 h-12 bg-purple-500 rounded-full flex items-center justify-center mx-auto mb-2 shadow-lg">
-                  <Star className="w-6 h-6 text-white fill-white" />
+                <div className="w-10 h-10 bg-purple-500 rounded-full flex items-center justify-center mx-auto shadow-lg">
+                  <Star className="w-5 h-5 text-white fill-white" />
                 </div>
                 <p className={`text-sm ${theme.cardText} font-semibold`}>Leave Review</p>
               </div>
             </div>
             
-            <p className={`text-base ${theme.cardText} opacity-80 leading-relaxed mb-4`}>
-              Point your phone camera at the QR code above<br />
-              Tap the notification to open the review page
-            </p>
+    
             
             <div className={`inline-flex items-center px-6 py-3 bg-white/20 rounded-full backdrop-blur-sm border-2 border-white/30`}>
               <Globe className="w-5 h-5 mr-2 text-gray-600" />
@@ -480,6 +477,14 @@ export const QRCodeCard: React.FC<QRCodeCardProps> = ({ card }) => {
             </div>
           </div>
 
+          {/* AI Powered Branding */}
+          <div className="flex flex-row items-center justify-center mt-5 mb-2 gap-3">
+            <img src="./../../public/scc.png" alt="SCC Logo" className="h-14 w-auto ml-2 drop-shadow-md" />
+            <div className="flex flex-col justify-between h-full">
+              <span className="text-2xs font-semibold text-gray-500 tracking-widest self-start">AI ✨<span className="text-purple-500">Powered</span></span>
+              <span className="text-lg font-bold whitespace-nowrap text-sky-500  self-end">SCC INFOTECH LLP</span>
+            </div>
+          </div>
         </div>
       </div>
 

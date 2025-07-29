@@ -17,6 +17,7 @@ const transformDbRowToCard = (row: any): ReviewCard => ({
   type: row.type,
   description: row.description || '',
   location: row.location || '',
+  services: row.services || [],
   slug: row.slug,
   logoUrl: row.logo_url || '',
   googleMapsUrl: row.google_maps_url,
@@ -32,6 +33,7 @@ const transformCardToDbInsert = (card: ReviewCard) => {
     type: card.type,
     description: card.description || null,
     location: card.location || null,
+    services: card.services || null,
     slug: card.slug,
     logo_url: card.logoUrl || null,
     google_maps_url: card.googleMapsUrl,
@@ -54,6 +56,7 @@ const transformCardToDbUpdate = (card: ReviewCard) => ({
   type: card.type,
   description: card.description || null,
   location: card.location || null,
+  services: card.services || null,
   slug: card.slug,
   logo_url: card.logoUrl || null,
   google_maps_url: card.googleMapsUrl,
@@ -111,6 +114,7 @@ export const storage = {
       // Always try Supabase first if configured
       if (isSupabaseConfigured() && supabase) {
         try {
+          console.log('Attempting to fetch cards from Supabase...');
           const { data, error } = await supabase
             .from('review_cards')
             .select('*')
@@ -121,6 +125,7 @@ export const storage = {
             return this._getLocalCards();
           }
 
+          console.log(`Successfully fetched ${data?.length || 0} cards from Supabase`);
           const supabaseCards = (data || []).map(transformDbRowToCard);
           
           // Also sync with localStorage for offline access
@@ -143,15 +148,23 @@ export const storage = {
 
   async addCard(card: ReviewCard): Promise<boolean> {
     try {
+      console.log('Adding card:', card.businessName);
+      
       // Always save to localStorage first for immediate feedback
       this._addLocalCard(card);
+      console.log('Card saved to localStorage');
 
       // Then try to sync with Supabase if configured
       if (isSupabaseConfigured() && supabase) {
         try {
-          const { error } = await supabase
+          console.log('Attempting to save card to Supabase...');
+          const insertData = transformCardToDbInsert(card);
+          console.log('Insert data:', insertData);
+          
+          const { data, error } = await supabase
             .from('review_cards')
-            .insert([transformCardToDbInsert(card)]);
+            .upsert([insertData], { onConflict: 'id' })
+            .select();
 
           if (error) {
             console.error('Error adding card to Supabase (keeping in localStorage):', error);
@@ -159,7 +172,7 @@ export const storage = {
             return true;
           }
           
-          console.log('Card successfully added to Supabase and localStorage');
+          console.log('Card successfully added to Supabase:', data);
           return true;
         } catch (supabaseError) {
           console.error('Supabase connection failed (keeping in localStorage):', supabaseError);
@@ -178,16 +191,24 @@ export const storage = {
 
   async updateCard(updatedCard: ReviewCard): Promise<boolean> {
     try {
+      console.log('Updating card:', updatedCard.businessName);
+      
       // Always update localStorage first
       this._updateLocalCard(updatedCard);
+      console.log('Card updated in localStorage');
 
       // Then try to sync with Supabase if configured
       if (isSupabaseConfigured() && supabase) {
         try {
-          const { error } = await supabase
+          console.log('Attempting to update card in Supabase...');
+          const updateData = transformCardToDbUpdate(updatedCard);
+          console.log('Update data:', updateData);
+          
+          const { data, error } = await supabase
             .from('review_cards')
-            .update(transformCardToDbUpdate(updatedCard))
-            .eq('id', updatedCard.id);
+            .update(updateData)
+            .eq('id', updatedCard.id)
+            .select();
 
           if (error) {
             console.error('Error updating card in Supabase (keeping localStorage changes):', error);
@@ -195,7 +216,7 @@ export const storage = {
             return true;
           }
           
-          console.log('Card successfully updated in Supabase and localStorage');
+          console.log('Card successfully updated in Supabase:', data);
           return true;
         } catch (supabaseError) {
           console.error('Supabase connection failed (keeping localStorage changes):', supabaseError);
@@ -214,12 +235,16 @@ export const storage = {
 
   async deleteCard(cardId: string): Promise<boolean> {
     try {
+      console.log('Deleting card:', cardId);
+      
       // Always delete from localStorage first
       this._deleteLocalCard(cardId);
+      console.log('Card deleted from localStorage');
 
       // Then try to sync with Supabase if configured
       if (isSupabaseConfigured() && supabase) {
         try {
+          console.log('Attempting to delete card from Supabase...');
           const { error } = await supabase
             .from('review_cards')
             .delete()
@@ -231,7 +256,7 @@ export const storage = {
             return true;
           }
           
-          console.log('Card successfully deleted from Supabase and localStorage');
+          console.log('Card successfully deleted from Supabase');
           return true;
         } catch (supabaseError) {
           console.error('Supabase connection failed (keeping localStorage changes):', supabaseError);
@@ -250,9 +275,12 @@ export const storage = {
 
   async getCardBySlug(slug: string): Promise<ReviewCard | null> {
     try {
+      console.log('Looking for card with slug:', slug);
+      
       // Try Supabase first if configured
       if (isSupabaseConfigured() && supabase) {
         try {
+          console.log('Searching Supabase for card...');
           const { data, error } = await supabase
             .from('review_cards')
             .select('*')
@@ -265,9 +293,11 @@ export const storage = {
           }
 
           if (data) {
+            console.log('Card found in Supabase:', data.business_name);
             return transformDbRowToCard(data);
           }
           
+          console.log('Card not found in Supabase, checking localStorage...');
           // If not found in Supabase, check localStorage
           return this._getLocalCardBySlug(slug);
         } catch (supabaseError) {
@@ -293,6 +323,7 @@ export const storage = {
 
     try {
       // Test connection first before attempting migration
+      console.log('Testing Supabase connection...');
       const { data: testData, error: testError } = await supabase
         .from('review_cards')
         .select('count')
@@ -338,7 +369,7 @@ export const storage = {
           // Insert the card
           const { error } = await supabase
             .from('review_cards')
-            .insert([transformCardToDbInsert(card)]);
+            .upsert([transformCardToDbInsert(card)], { onConflict: 'id' });
 
           if (error) {
             console.error(`Failed to migrate card: ${card.businessName}`, error);
@@ -376,7 +407,7 @@ export const storage = {
         return;
       }
 
-      const localCards = this._getLocalCards();
+      console.log('Starting data sync...');
       const { data: supabaseCards, error } = await supabase
         .from('review_cards')
         .select('*')
@@ -392,7 +423,7 @@ export const storage = {
       // Update localStorage with latest Supabase data
       this._saveLocalCards(transformedSupabaseCards);
       
-      console.log('Data sync completed successfully');
+      console.log(`Data sync completed successfully - ${transformedSupabaseCards.length} cards synced`);
     } catch (error) {
       console.error('Error during data sync:', error);
     }

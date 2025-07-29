@@ -1,26 +1,52 @@
-import React, { useState, useEffect } from 'react';
-import { Copy, CheckCircle, RotateCcw, ArrowLeft, Sparkles } from 'lucide-react';
-import { ReviewCard } from '../types';
-import { StarRating } from './StarRating';
-import { aiService } from '../utils/aiService';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect } from "react";
+import {
+  Copy,
+  CheckCircle,
+  RotateCcw,
+  ArrowLeft,
+  Sparkles,
+  RefreshCw,
+} from "lucide-react";
+import { ReviewCard } from "../types";
+import { StarRating } from "./StarRating";
+import { SegmentedButtonGroup } from "./SegmentedButtonGroup";
+import { ServiceSelector } from "./ServiceSelector";
+import { aiService } from "../utils/aiService";
+import { Link } from "react-router-dom";
 
 interface CompactReviewCardViewProps {
   card: ReviewCard;
 }
 
-export const CompactReviewCardView: React.FC<CompactReviewCardViewProps> = ({ card }) => {
-  const [currentReview, setCurrentReview] = useState('');
+export const CompactReviewCardView: React.FC<CompactReviewCardViewProps> = ({
+  card,
+}) => {
+  const [currentReview, setCurrentReview] = useState("");
   const [selectedRating, setSelectedRating] = useState(5);
+  const [selectedLanguage, setSelectedLanguage] = useState("English");
+  const [selectedTone, setSelectedTone] = useState<
+    "Professional" | "Friendly" | "Casual" | "Grateful"
+  >("Friendly");
+  const [selectedServices, setSelectedServices] = useState<string[]>([]);
   const [copied, setCopied] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
+  const [showAdvanced, setShowAdvanced] = useState(false);
+
+  const languageOptions = ["English", "Gujarati", "Hindi"];
+
+  const toneOptions = ["Friendly", "Professional", "Casual", "Grateful"];
 
   useEffect(() => {
     // Generate initial review when component loads
-    generateReviewForRating(5);
+    generateReviewForRating(5, "English", "Friendly", []);
   }, []);
 
-  const generateReviewForRating = async (rating: number) => {
+  const generateReviewForRating = async (
+    rating: number,
+    language?: string,
+    tone?: "Professional" | "Friendly" | "Casual" | "Grateful",
+    services?: string[]
+  ) => {
     setIsGenerating(true);
     try {
       const review = await aiService.generateReview({
@@ -28,13 +54,27 @@ export const CompactReviewCardView: React.FC<CompactReviewCardViewProps> = ({ ca
         category: card.category,
         type: card.type,
         highlights: card.description,
-        starRating: rating
+        selectedServices: services || selectedServices,
+        starRating: rating,
+        language: language || selectedLanguage,
+        tone: tone || selectedTone,
+        useCase: "Customer review",
       });
-      setCurrentReview(review);
+      setCurrentReview(review.text);
     } catch (error) {
-      console.error('Failed to generate review:', error);
-      // Fallback review
-      setCurrentReview(`Great experience at ${card.businessName}! Highly recommend their ${card.type.toLowerCase()} services.`);
+      console.error("Failed to generate review:", error);
+      // Use contextual fallback review
+      const fallbackReview = aiService.getFallbackReview({
+        businessName: card.businessName,
+        category: card.category,
+        type: card.type,
+        selectedServices: services || selectedServices,
+        starRating: rating,
+        language: language || selectedLanguage,
+        tone: tone || selectedTone,
+        useCase: "Customer review",
+      });
+      setCurrentReview(fallbackReview);
     } finally {
       setIsGenerating(false);
     }
@@ -42,7 +82,44 @@ export const CompactReviewCardView: React.FC<CompactReviewCardViewProps> = ({ ca
 
   const handleRatingChange = (rating: number) => {
     setSelectedRating(rating);
-    generateReviewForRating(rating);
+    generateReviewForRating(
+      rating,
+      selectedLanguage,
+      selectedTone,
+      selectedServices
+    );
+  };
+
+  const handleLanguageChange = (language: string) => {
+    setSelectedLanguage(language);
+    generateReviewForRating(
+      selectedRating,
+      language,
+      selectedTone,
+      selectedServices
+    );
+  };
+
+  const handleToneChange = (
+    tone: "Professional" | "Friendly" | "Casual" | "Grateful"
+  ) => {
+    setSelectedTone(tone);
+    generateReviewForRating(
+      selectedRating,
+      selectedLanguage,
+      tone,
+      selectedServices
+    );
+  };
+
+  const handleServicesChange = (services: string[]) => {
+    setSelectedServices(services);
+    generateReviewForRating(
+      selectedRating,
+      selectedLanguage,
+      selectedTone,
+      services
+    );
   };
 
   const handleCopyAndRedirect = async () => {
@@ -52,12 +129,40 @@ export const CompactReviewCardView: React.FC<CompactReviewCardViewProps> = ({ ca
       setTimeout(() => setCopied(false), 2000);
       window.location.href = card.googleMapsUrl;
     } catch (err) {
-      console.error('Failed to copy text: ', err);
+      console.error("Failed to copy text: ", err);
     }
   };
 
   const handleRegenerateReview = () => {
-    generateReviewForRating(selectedRating);
+    generateReviewForRating(
+      selectedRating,
+      selectedLanguage,
+      selectedTone,
+      selectedServices
+    );
+  };
+
+  const renderReviewText = () => {
+    if (selectedLanguage.includes("+")) {
+      // For mixed languages, try to split by sentences
+      const sentences = currentReview.split(/[।.!?]+/).filter((s) => s.trim());
+      return (
+        <div className="space-y-2">
+          {sentences.map((sentence, index) => (
+            <p key={index} className="text-gray-800 text-sm leading-relaxed">
+              {sentence.trim()}
+              {index < sentences.length - 1 ? "." : ""}
+            </p>
+          ))}
+        </div>
+      );
+    }
+
+    return (
+      <blockquote className="text-gray-800 text-sm leading-relaxed">
+        "{currentReview}"
+      </blockquote>
+    );
   };
 
   return (
@@ -68,7 +173,7 @@ export const CompactReviewCardView: React.FC<CompactReviewCardViewProps> = ({ ca
         <div className="absolute bottom-[10%] right-[10%] w-80 h-80 bg-purple-500/10 rounded-full blur-3xl animate-pulse delay-1000"></div>
       </div>
 
-      <div className="relative z-10 w-full max-w-md">
+      <div className="relative z-10 w-full max-w-xl">
         {/* Header */}
         <div className="text-center mb-6">
           <div className="inline-block relative">
@@ -111,11 +216,11 @@ export const CompactReviewCardView: React.FC<CompactReviewCardViewProps> = ({ ca
           <h1 className="text-2xl font-bold text-white mb-2 bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
             {card.businessName}
           </h1>
-          <p className="text-blue-200 text-sm">Review System</p>
+          <p className="text-blue-200 text-sm">AI-Powered Review System</p>
         </div>
 
         {/* Main Card */}
-        <div className="bg-white/95 backdrop-blur-md rounded-2xl p-6 shadow-2xl border border-white/20">
+        <div className="bg-white/95 backdrop-blur-md rounded-2xl p-8 shadow-2xl border border-white/20">
           {/* Star Rating Selector */}
           <div className="text-center mb-6">
             <p className="text-gray-700 font-medium mb-3">Select Rating</p>
@@ -135,28 +240,128 @@ export const CompactReviewCardView: React.FC<CompactReviewCardViewProps> = ({ ca
             </p>
           </div>
 
+          {/* Language & Tone Selectors */}
+          <div className="grid grid-cols-1 gap-4 mb-6">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Language
+              </label>
+              <SegmentedButtonGroup
+                options={languageOptions}
+                selected={selectedLanguage}
+                onChange={(value) => handleLanguageChange(value as string)}
+                size="sm"
+              />
+            </div>
+
+            {showAdvanced && (
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Tone
+                </label>
+                <SegmentedButtonGroup
+                  options={toneOptions}
+                  selected={selectedTone}
+                  onChange={(value) =>
+                    handleToneChange(
+                      value as
+                        | "Professional"
+                        | "Friendly"
+                        | "Casual"
+                        | "Grateful"
+                    )
+                  }
+                  size="sm"
+                />
+              </div>
+            )}
+          </div>
+
+          {/* Service Selection */}
+          {card.services && card.services.length > 0 && (
+            <ServiceSelector
+              services={card.services}
+              selectedServices={selectedServices}
+              onSelectionChange={handleServicesChange}
+              className="mb-8"
+            />
+          )}
+
+          {/* Advanced Options Toggle */}
+          <div className="text-center mb-4">
+            <button
+              onClick={() => setShowAdvanced(!showAdvanced)}
+              className="text-sm text-blue-600 hover:text-blue-800 flex items-center mx-auto"
+            >
+              {showAdvanced ? "Hide" : "Show"} Advanced Options
+            </button>
+          </div>
+
           {/* Review Text */}
-          <div className="mb-6">
-            <div className="bg-gray-50 rounded-xl p-4 border border-gray-200 min-h-[100px] flex items-center">
+          <div className="mb-8">
+            <div className="bg-gradient-to-br from-gray-50 to-blue-50/30 rounded-2xl p-6 border-2 border-gray-100 min-h-[120px] flex items-center shadow-inner">
               {isGenerating ? (
                 <div className="flex items-center justify-center w-full">
-                  <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600"></div>
-                  <span className="ml-2 text-gray-600">Generating review...</span>
+                  <div className="text-center">
+                    <RefreshCw className="animate-spin h-8 w-8 text-blue-600 mx-auto mb-2" />
+                    <span className="text-gray-600 font-medium">
+                      Generating personalized review...
+                    </span>
+                    <p className="text-xs text-gray-500 mt-1">
+                      Including{" "}
+                      {selectedServices.length > 0
+                        ? `${selectedServices.length} selected services`
+                        : "your preferences"}
+                    </p>
+                  </div>
                 </div>
               ) : (
-                <blockquote className="text-gray-800 text-sm leading-relaxed">
-                  "{currentReview}"
-                </blockquote>
+                <div className="w-full">{renderReviewText()}</div>
               )}
             </div>
+
+            {/* Review Info */}
+            {currentReview && !isGenerating && (
+              <div className="mt-4 p-3 bg-white/80 rounded-xl border border-gray-200">
+                <div className="flex items-center justify-between text-xs">
+                  <div className="flex items-center gap-2 text-gray-600">
+                    <div className="flex items-center gap-1">
+                      <div className="w-2 h-2 bg-blue-400 rounded-full"></div>
+                      <span className="font-medium">{selectedLanguage}</span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <div className="w-2 h-2 bg-purple-400 rounded-full"></div>
+                      <span className="font-medium">{selectedTone}</span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <div className="w-2 h-2 bg-yellow-400 rounded-full"></div>
+                      <span className="font-medium">
+                        {selectedRating} stars
+                      </span>
+                    </div>
+                    {selectedServices.length > 0 && (
+                      <div className="flex items-center gap-1">
+                        <div className="w-2 h-2 bg-green-400 rounded-full"></div>
+                        <span className="font-medium">
+                          {selectedServices.length} services
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                  <span className="text-gray-500 font-mono">
+                    {currentReview.length} chars
+                  </span>
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Action Buttons */}
-          <div className="space-y-3">
+          <div className="flex flex-row gap-4">
             <button
               onClick={handleCopyAndRedirect}
               disabled={!currentReview || isGenerating}
-              className={`w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl font-semibold transition-all duration-300 ${
+              className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-xl font-semibold transition-all duration-300 ${
                 copied
                   ? "bg-green-500 text-white"
                   : "bg-gradient-to-r from-blue-600 to-purple-600 text-white hover:from-blue-700 hover:to-purple-700"
@@ -178,10 +383,10 @@ export const CompactReviewCardView: React.FC<CompactReviewCardViewProps> = ({ ca
             <button
               onClick={handleRegenerateReview}
               disabled={isGenerating}
-              className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-gray-100 text-gray-700 rounded-xl hover:bg-gray-200 transition-colors duration-200 disabled:opacity-50"
+              className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-gray-400 text-gray-900 rounded-xl hover:bg-gray-200 transition-colors duration-200 disabled:opacity-50"
             >
               {isGenerating ? (
-                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-gray-600"></div>
+                <RefreshCw className="w-4 h-4 animate-spin" />
               ) : (
                 <Sparkles className="w-4 h-4" />
               )}
@@ -189,13 +394,47 @@ export const CompactReviewCardView: React.FC<CompactReviewCardViewProps> = ({ ca
             </button>
           </div>
 
+          {/* AI Powered Branding */}
+          <div className="flex flex-row items-center justify-center mt-5 mb-2 gap-3">
+            <img
+              src="./../../public/scc.png"
+              alt="SCC Logo"
+              className="h-14 w-auto ml-2 drop-shadow-md"
+            />
+            <div className="flex flex-col justify-between h-full">
+              <span className="text-2xs font-semibold text-gray-500 tracking-widest self-start">
+                AI ✨<span className="text-purple-500">Powered</span>
+              </span>
+              <span className="text-lg font-bold whitespace-nowrap text-sky-500  self-end">
+                SCC INFOTECH LLP
+              </span>
+            </div>
+          </div>
+
           {/* Instructions */}
-          <div className="mt-6 p-4 bg-blue-50 rounded-xl border border-blue-200">
-            <h3 className="text-sm font-semibold text-blue-900 mb-2">📱 How It Works</h3>
-            <div className="space-y-1 text-xs text-blue-800">
+          <div className="mt-8 p-5 bg-gradient-to-r from-blue-50 to-purple-50 rounded-2xl border-2 border-blue-100">
+            <h3 className="text-sm font-bold text-blue-900 mb-3 flex items-center">
+              <span className="text-lg mr-2">🚀</span>
+              How It Works
+            </h3>
+            <div className="space-y-2 text-xs text-blue-800">
               <p>1. Select your rating (1-5 stars)</p>
-              <p>2. Click "Copy & Review" to copy text</p>
-              <p>3. Paste in Google Maps and submit</p>
+              <p>2. Choose your preferred language</p>
+              {card.services && card.services.length > 0 && (
+                <p>3. Pick services you want to highlight</p>
+              )}
+              <p>
+                {card.services && card.services.length > 0 ? "4" : "3"}. Adjust
+                tone if needed (Advanced Options)
+              </p>
+              <p>
+                {card.services && card.services.length > 0 ? "5" : "4"}. Click
+                "Copy & Review" to copy your personalized text
+              </p>
+              <p>
+                {card.services && card.services.length > 0 ? "6" : "5"}. Paste
+                in Google Maps and submit your review
+              </p>
             </div>
           </div>
         </div>

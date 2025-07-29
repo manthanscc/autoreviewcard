@@ -1,9 +1,11 @@
 import { createClient } from '@supabase/supabase-js';
-import { config } from './config';
 
-// Only create client if environment variables are available and valid
-export const supabase = config.isSupabaseConfigured()
-  ? createClient(config.supabase.url, config.supabase.anonKey, {
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || '';
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || '';
+
+// Only create client if environment variables are available
+export const supabase = supabaseUrl && supabaseAnonKey 
+  ? createClient(supabaseUrl, supabaseAnonKey, {
       auth: {
         persistSession: false // Disable auth since we're using local auth
       }
@@ -11,7 +13,12 @@ export const supabase = config.isSupabaseConfigured()
   : null;
 
 export const isSupabaseConfigured = () => {
-  const isConfigured = config.isSupabaseConfigured();
+  const isConfigured = !!(
+    supabaseUrl && 
+    supabaseAnonKey && 
+    supabaseUrl !== 'your_supabase_project_url_here' &&
+    supabaseUrl.includes('supabase.co')
+  );
   
   if (isConfigured) {
     console.log('Supabase is properly configured');
@@ -66,6 +73,7 @@ export interface Database {
           type: string;
           description: string | null;
           location: string | null;
+          services: string[] | null;
           slug: string;
           logo_url: string | null;
           google_maps_url: string;
@@ -79,6 +87,7 @@ export interface Database {
           type: string;
           description?: string | null;
           location?: string | null;
+          services?: string[] | null;
           slug: string;
           logo_url?: string | null;
           google_maps_url: string;
@@ -92,6 +101,7 @@ export interface Database {
           type?: string;
           description?: string | null;
           location?: string | null;
+          services?: string[] | null;
           slug?: string;
           logo_url?: string | null;
           google_maps_url?: string;
