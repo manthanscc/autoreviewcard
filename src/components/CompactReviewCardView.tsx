@@ -397,7 +397,7 @@ export const CompactReviewCardView: React.FC<CompactReviewCardViewProps> = ({
           {/* AI Powered Branding */}
           <div className="flex flex-row items-center justify-center mt-5 mb-2 gap-3">
             <img
-              src="./../../public/scc.png"
+              src="/scc.png"
               alt="SCC Logo"
               className="h-14 w-auto ml-2 drop-shadow-md"
             />

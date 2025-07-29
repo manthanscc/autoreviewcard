@@ -479,7 +479,7 @@ export const QRCodeCard: React.FC<QRCodeCardProps> = ({ card }) => {
 
           {/* AI Powered Branding */}
           <div className="flex flex-row items-center justify-center mt-5 mb-2 gap-3">
-            <img src="./../../public/scc.png" alt="SCC Logo" className="h-14 w-auto ml-2 drop-shadow-md" />
+            <img src="/scc.png" alt="SCC Logo" className="h-14 w-auto ml-2 drop-shadow-md" />
             <div className="flex flex-col justify-between h-full">
               <span className="text-2xs font-semibold text-gray-500 tracking-widest self-start">AI ✨<span className="text-purple-500">Powered</span></span>
               <span className="text-lg font-bold whitespace-nowrap text-sky-500  self-end">SCC INFOTECH LLP</span>

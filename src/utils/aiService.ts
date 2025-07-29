@@ -135,8 +135,7 @@ ${highlights ? `Customer highlights: ${highlights}` : ''}
 ${serviceInstructions}
 
 Requirements:
-- Write 2-4 sentences maximum
-- create short, engaging review text
+- Write 3-5 sentences maximum
 - First sentence always different
 - ${businessName} is shown always different place in review
 - Sound natural and human-like with regional authenticity
