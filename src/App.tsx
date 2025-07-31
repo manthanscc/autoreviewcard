@@ -6,10 +6,8 @@ import { LoginPage } from './components/LoginPage';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import { storage } from './utils/storage';
 import { auth } from './utils/auth';
-import usePageTracking from './utils/analytics'; // <-- Add this import
 
 function App() {
-  usePageTracking(); // <-- Add this line
   return (
     <Router>
       <Routes>
