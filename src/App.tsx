@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import ReactGA from 'react-ga4';
 import { AdminDashboard } from './components/AdminDashboard';
 import { CompactReviewCardView } from './components/CompactReviewCardView';
 import { LoginPage } from './components/LoginPage';
@@ -7,7 +8,15 @@ import { ProtectedRoute } from './components/ProtectedRoute';
 import { storage } from './utils/storage';
 import { auth } from './utils/auth';
 
+ReactGA.initialize("G-YE1SGYY8P4"); // your measurement ID
+ReactGA.send("pageview");
+
 function App() {
+
+  useEffect(() => {
+    ReactGA.send({ hitType: "pageview", page: window.location.pathname });
+  }, []);
+
   return (
     <Router>
       <Routes>
