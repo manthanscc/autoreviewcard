@@ -7,7 +7,7 @@ import { LoginPage } from './components/LoginPage';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import { storage } from './utils/storage';
 import { auth } from './utils/auth';
-import Homepage from './components/Homepage'; // <-- import Homepage
+import Homepage from './components/Home page/Homepage'; // <-- import Homepage
 
 ReactGA.initialize("G-YE1SGYY8P4"); // your measurement ID
 ReactGA.send("pageview");
