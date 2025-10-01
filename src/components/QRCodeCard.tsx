@@ -1,6 +1,7 @@
 import React, { useState, useRef } from 'react';
 import QRCode from 'react-qr-code';
 import html2canvas from 'html2canvas';
+import jsPDF from 'jspdf';
 import { Download, Maximize2, X, Building2, Utensils, GraduationCap, Heart, ShoppingBag, Plane, Home, Star, Wifi, Smartphone, QrCode, MapPin, Phone, Globe, Mail } from 'lucide-react';
 
 interface QRCodeCardProps {
@@ -131,10 +132,19 @@ export const QRCodeCard: React.FC<QRCodeCardProps> = ({ card }) => {
         logging: false
       });
       
-      const link = document.createElement('a');
-      link.download = `${card.businessName.replace(/[^a-zA-Z0-9]/g, '-')}-review-qr-card.png`;
-      link.href = canvas.toDataURL('image/png', 1.0);
-      link.click();
+      // Create PDF instead of PNG
+      const pdf = new jsPDF({
+        orientation: 'portrait',
+        unit: 'mm',
+        format: [105, 148] // A6 size for business card
+      });
+      
+      const imgData = canvas.toDataURL('image/png', 1.0);
+      const imgWidth = 105;
+      const imgHeight = 148;
+      
+      pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
+      pdf.save(`${card.businessName.replace(/[^a-zA-Z0-9]/g, '-')}-review-qr-card.pdf`);
     } catch (error) {
       console.error('Error downloading card:', error);
     } finally {
@@ -270,7 +280,7 @@ export const QRCodeCard: React.FC<QRCodeCardProps> = ({ card }) => {
                 onClick={downloadFullCard}
                 disabled={isDownloading}
                 className={`p-3 bg-white/20 hover:bg-white/30 rounded-xl transition-all duration-300 group-hover:scale-110 backdrop-blur-sm border border-white/20 ${isDownloading ? 'opacity-50' : ''}`}
-                title="Download Full Card"
+                title="Download PDF Card"
               >
                 <Download className="w-4 h-4 text-white drop-shadow-lg" />
               </button>
@@ -399,7 +409,7 @@ export const QRCodeCard: React.FC<QRCodeCardProps> = ({ card }) => {
             {/* Enhanced Star Rating */}
             <div className="flex justify-center mb-2">
               {[...Array(5)].map((_, i) => (
-                <Star key={i} className="w-8 h-8 text-yellow-500 fill-yellow-500 mx-1 drop-shadow-lg" />
+                <Star key={i} className="w-8 h-8 text-yellow-500 fill-yellow-500 mx-0 drop-shadow-lg" />
               ))}
             </div>
             
@@ -425,7 +435,7 @@ export const QRCodeCard: React.FC<QRCodeCardProps> = ({ card }) => {
                 {/* Enhanced Logo for Download */}
                 {card.logoUrl && (
                   <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="w-20 h-20 bg-white rounded-full p-4 shadow-2xl border-4 border-gray-100 ring-4 ring-white">
+                    <div className="w-20 h-20 bg-white rounded-full p-1 shadow-2xl border-4 border-gray-100 ring-4 ring-white">
                       <img
                         src={card.logoUrl}
                         alt={`${card.businessName} logo`}
@@ -479,10 +489,10 @@ export const QRCodeCard: React.FC<QRCodeCardProps> = ({ card }) => {
 
           {/* AI Powered Branding */}
           <div className="flex flex-row items-center justify-center mt-5 mb-2 gap-3">
-            <img src="/scc.png" alt="SCC Logo" className="h-14 w-auto ml-2 drop-shadow-md" />
+            <img src="/scc.png" alt="SCC Logo" className="h-14 w-auto ml-2 mt-4 drop-shadow-md" />
             <div className="flex flex-col justify-between h-full">
               <span className="text-2xs font-semibold text-gray-500 tracking-widest self-start">AI ✨<span className="text-purple-500">Powered</span></span>
-              <span className="text-lg font-bold whitespace-nowrap text-sky-500  self-end">SCC INFOTECH LLP</span>
+              <span className="text-lg font-bold whitespace-nowrap text-sky-500  self-end">SCC INFOTECH</span>
             </div>
           </div>
         </div>
@@ -574,7 +584,7 @@ export const QRCodeCard: React.FC<QRCodeCardProps> = ({ card }) => {
                 className={`flex-1 px-6 py-4 bg-gradient-to-r ${theme.gradient} text-white rounded-xl hover:opacity-90 transition-opacity duration-200 flex items-center justify-center gap-3 font-semibold ${isDownloading ? 'opacity-50' : ''}`}
               >
                 <Download className="w-5 h-5" />
-                {isDownloading ? 'Downloading...' : 'Download Card'}
+                {isDownloading ? 'Generating PDF...' : 'Download PDF Card'}
               </button>
             </div>
           </div>
