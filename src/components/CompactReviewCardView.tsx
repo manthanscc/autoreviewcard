@@ -127,35 +127,14 @@ export const CompactReviewCardView: React.FC<CompactReviewCardViewProps> = ({
       await navigator.clipboard.writeText(currentReview);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
-
+      
       // Check if device is mobile
-      const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
-        navigator.userAgent
-      );
-
+      const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+      
       if (isMobile) {
-        // Try to open Google Maps app first
-        const mapsAppUrl = card.googleMapsUrl.replace(
-          "https://maps.google.com",
-          "googlemaps://"
-        );
-
-        // Create a temporary link to test if the app opens
-        const link = document.createElement("a");
-        link.href = mapsAppUrl;
-
-        // Set a timeout to fallback to web version if app doesn't open
-        const timeout = setTimeout(() => {
-          window.location.href = card.googleMapsUrl;
-        }, 1000);
-
-        // Try to open the app
-        link.click();
-
-        // If we're still here after a short delay, the app likely opened
-        setTimeout(() => {
-          clearTimeout(timeout);
-        }, 500);
+        // Use Google Maps app URL scheme for mobile
+        const mapsAppUrl = card.googleMapsUrl.replace('https://maps.google.com', 'googlemaps://');
+        window.location.href = mapsAppUrl;
       } else {
         // Use regular web URL for desktop
         window.location.href = card.googleMapsUrl;
@@ -407,7 +386,7 @@ export const CompactReviewCardView: React.FC<CompactReviewCardViewProps> = ({
               ) : (
                 <>
                   <Copy className="w-5 h-5" />
-                  Copy & Review
+                  Cop & Review
                 </>
               )}
             </button>
