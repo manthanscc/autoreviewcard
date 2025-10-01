@@ -68,6 +68,87 @@ export const QRCodeCard = forwardRef<QRCodeCardHandle, QRCodeCardProps>(
 
     return (
       <div className={`flex flex-col items-start gap-4 ${className}`}>
+        {/* Mini screen preview card (not used for PDF export */}
+        <div
+          className="
+            w-full max-w-sm
+            rounded-2xl
+            bg-white/80 backdrop-blur
+            border border-indigo-200
+            shadow-md
+            p-4
+            flex gap-4
+            items-start
+            print:hidden
+          "
+        >
+          <div className="relative w-24 h-24 flex items-center justify-center rounded-xl border border-gray-200 bg-white shadow-inner">
+            <QRCode
+              value={qrUrl}
+              size={96}
+              style={{ width: 96, height: 96 }}
+              fgColor="#1f2937"
+              bgColor="#ffffff"
+              level="M"
+            />
+            {card.logoUrl && (
+              <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
+                <div
+                  className="
+                    w-10 h-10
+                    rounded-full
+                    bg-white
+                    border border-gray-300
+                    ring-2 ring-white
+                    shadow
+                    flex items-center justify-center overflow-hidden
+                  "
+                >
+                  <img
+                    src={card.logoUrl}
+                    alt={`${card.businessName} logo`}
+                    className="w-full h-full object-contain"
+                    onError={(e) => {
+                      (e.target as HTMLImageElement).style.display = 'none';
+                    }}
+                  />
+                </div>
+              </div>
+            )}
+          </div>
+          <div className="flex-1 flex flex-col min-w-0">
+            <h2 className="text-sm font-bold text-gray-900 leading-tight line-clamp-2">
+              {card.businessName}
+            </h2>
+            {card.tagline && (
+              <p className="mt-1 text-xs font-medium text-indigo-700 line-clamp-2">
+                {card.tagline}
+              </p>
+            )}
+            <p className="mt-1 text-[10px] uppercase tracking-wide text-gray-500 font-semibold">
+              Tap Download for print-ready 4x6
+            </p>
+            <div className="mt-auto pt-2">
+              <button
+                onClick={exportToPDF}
+                disabled={downloading}
+                className="
+                  inline-flex items-center gap-1
+                  px-3 py-1.5
+                  rounded-md
+                  bg-indigo-600
+                  text-white
+                  text-xs font-semibold
+                  shadow
+                  hover:bg-indigo-700
+                  disabled:opacity-50
+                "
+              >
+                {downloading ? 'Generating…' : 'Download 4x6 PDF'}
+              </button>
+            </div>
+          </div>
+        </div>
         {/* Outer fixed 4×6 container WITH decorative border */}
         <div
           ref={cardRef}
@@ -77,6 +158,9 @@ export const QRCodeCard = forwardRef<QRCodeCardHandle, QRCodeCardProps>(
             font-[system-ui]
             print:shadow-none
                             bg-[linear-gradient(135deg,#4f46e5_0%,#6366f1_55%,#4f46e5_100%)]
+                            hidden print:block
+            rounded-[34px]
+            shadow-[0_4px_14px_rgba(0,0,0,0.1)]
 
           "
         >
@@ -214,15 +298,6 @@ export const QRCodeCard = forwardRef<QRCodeCardHandle, QRCodeCardProps>(
               <div className="absolute -right-1 top-2/3 -translate-y-1/2 w-5 h-12 bg-white rounded-sm -rotate-[40deg] pointer-events-none" />
             </div>
         </div>
-
-        {/* Download Button */}
-        <button
-          onClick={exportToPDF}
-          disabled={downloading}
-          className="inline-flex items-center justify-center px-4 py-2 rounded-md bg-indigo-600 text-white text-sm font-semibold shadow hover:bg-indigo-700 disabled:opacity-50"
-        >
-          {downloading ? 'Generating…' : 'Download 4x6 PDF'}
-        </button>
       </div>
     );
   }
