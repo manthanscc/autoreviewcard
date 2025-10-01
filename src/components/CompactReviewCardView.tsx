@@ -133,7 +133,7 @@ export const CompactReviewCardView: React.FC<CompactReviewCardViewProps> = ({
       
       if (isMobile) {
         // Use Google Maps app URL scheme for mobile
-        const mapsAppUrl = card.googleMapsUrl.replace('https://maps.google.com', 'googlemaps://');
+        const mapsAppUrl = card.googleMapsUrl.replace('googlemaps://', 'https://maps.google.com');
         window.location.href = mapsAppUrl;
       } else {
         // Use regular web URL for desktop
@@ -386,7 +386,7 @@ export const CompactReviewCardView: React.FC<CompactReviewCardViewProps> = ({
               ) : (
                 <>
                   <Copy className="w-5 h-5" />
-                  Cop & Review
+                  Copy & Review
                 </>
               )}
             </button>
