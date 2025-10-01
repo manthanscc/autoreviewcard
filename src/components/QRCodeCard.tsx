@@ -399,8 +399,8 @@ export const QRCodeCard: React.FC<QRCodeCardProps> = ({ card }) => {
                 </p>
                 {card.location && (
                   <p className={`text-lg ${theme.cardText} opacity-70 flex items-center`}>
-                    <MapPin className="w-5 h-5 mr-2" />
-                    {card.location}
+                    {/* <MapPin className="w-5 h-5 mr-2" /> */}
+                    📍{card.location}
                   </p>
                 )}
               </div>
