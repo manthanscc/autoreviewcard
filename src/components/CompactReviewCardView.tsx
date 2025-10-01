@@ -127,7 +127,39 @@ export const CompactReviewCardView: React.FC<CompactReviewCardViewProps> = ({
       await navigator.clipboard.writeText(currentReview);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
-      window.location.href = card.googleMapsUrl;
+
+      // Check if device is mobile
+      const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+        navigator.userAgent
+      );
+
+      if (isMobile) {
+        // Try to open Google Maps app first
+        const mapsAppUrl = card.googleMapsUrl.replace(
+          "https://maps.google.com",
+          "googlemaps://"
+        );
+
+        // Create a temporary link to test if the app opens
+        const link = document.createElement("a");
+        link.href = mapsAppUrl;
+
+        // Set a timeout to fallback to web version if app doesn't open
+        const timeout = setTimeout(() => {
+          window.location.href = card.googleMapsUrl;
+        }, 1000);
+
+        // Try to open the app
+        link.click();
+
+        // If we're still here after a short delay, the app likely opened
+        setTimeout(() => {
+          clearTimeout(timeout);
+        }, 500);
+      } else {
+        // Use regular web URL for desktop
+        window.location.href = card.googleMapsUrl;
+      }
     } catch (err) {
       console.error("Failed to copy text: ", err);
     }
