@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Plus, Edit, Trash2, Eye, Search, Building2, Calendar, LogOut, Database, Loader2, Wifi, WifiOff, RefreshCw } from 'lucide-react';
+import { Plus, Edit, Trash2, Eye, Search, Building2, Calendar, LogOut, Database, Loader2, Wifi, WifiOff, RefreshCw, QrCode } from 'lucide-react';
 import { ReviewCard } from '../types';
 import { storage } from '../utils/storage';
 import { formatDate } from '../utils/helpers';
@@ -420,9 +420,9 @@ export const AdminDashboard: React.FC = () => {
             {/* QR Codes Grid */}
             <div>
               <h2 className="text-2xl font-bold text-white mb-6 flex items-center">
-                <div className="w-6 h-6 mr-3 bg-gradient-to-r from-blue-400 to-purple-400 rounded flex items-center justify-center">
-                  <span className="text-xs font-bold text-white">QR</span>
-                </div>
+                
+                  <QrCode className="w-6 h-6 mr-2 text-white" />
+                
                 QR Codes ({filteredCards.length})
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">

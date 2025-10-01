@@ -46,22 +46,23 @@ export const QRCodeCard = forwardRef<QRCodeCardHandle, QRCodeCardProps>(
 
     const exportToPDF = async () => {
       if (!cardRef.current) return;
+      setDownloading(true);
+      const el = cardRef.current;
+      const wasHidden = el.classList.contains('hidden');
+      if (wasHidden) el.classList.remove('hidden');
       try {
-        setDownloading(true);
-        const canvas = await html2canvas(cardRef.current, {
+        const canvas = await html2canvas(el, {
           backgroundColor: '#ffffff',
           scale: 4,
-          useCORS: true
+          useCORS: true,
+          logging: false
         });
         const imgData = canvas.toDataURL('image/png', 1.0);
-        const pdf = new jsPDF({
-          orientation: 'portrait',
-            unit: 'mm',
-            format: [101.6, 152.4] // 4x6 inch
-        });
+        const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: [101.6, 152.4] });
         pdf.addImage(imgData, 'PNG', 0, 0, 101.6, 152.4);
         pdf.save(`${card.businessName.replace(/[^a-z0-9]/gi, '-')}-review-card.pdf`);
       } finally {
+        if (wasHidden) el.classList.add('hidden');
         setDownloading(false);
       }
     };
@@ -152,17 +153,8 @@ export const QRCodeCard = forwardRef<QRCodeCardHandle, QRCodeCardProps>(
         {/* Outer fixed 4×6 container WITH decorative border */}
         <div
           ref={cardRef}
-          className="
-            relative
-            w-[384px] h-[576px]
-            font-[system-ui]
-            print:shadow-none
-                            bg-[linear-gradient(135deg,#4f46e5_0%,#6366f1_55%,#4f46e5_100%)]
-                            hidden print:block
-            rounded-[34px]
-            shadow-[0_4px_14px_rgba(0,0,0,0.1)]
-
-          "
+          className="relative w-[384px] h-[576px] font-[system-ui] bg-[linear-gradient(135deg,#4f46e5_0%,#6366f1_55%,#4f46e5_100%)] shadow-[0_4px_14px_rgba(0,0,0,0.1)]"
+          style={{ position: 'absolute', top: -10000, left: -10000 }} // off-screen but rendered
         >
           {/* Gradient border (Sticker style) */}
             <div
