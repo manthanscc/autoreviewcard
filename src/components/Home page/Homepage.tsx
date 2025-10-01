@@ -414,7 +414,7 @@ function App() {
       <div className="fixed bottom-6 right-6 z-50">
         <button
           className="group relative w-16 h-16 bg-green-500 hover:bg-green-600 rounded-full flex items-center justify-center shadow-lg transition-all duration-300 transform hover:scale-110 animate-bounce-gentle"
-          onClick={() => window.open('https://wa.me/919876543210', '_blank')}
+          onClick={() => window.open('https://wa.me/9426479677', '_blank')}
           aria-label="Contact us on WhatsApp"
         >
           {/* Outer glow ring */}
@@ -426,10 +426,16 @@ function App() {
           {/* Secondary glow */}
           <div className="absolute inset-[-8px] rounded-full bg-green-300/30 blur-md animate-pulse-slow"></div>
           
-          {/* WhatsApp icon */}
-          <MessageCircle className="relative w-8 h-8 text-white group-hover:scale-110 transition-transform duration-300" />
-          
-          {/* Notification dot */}
+            {/* WhatsApp icon (brand SVG) */}
+            <svg
+            aria-hidden="true"
+            role="img"
+            viewBox="0 0 24 24"
+            className="relative w-12 h-12 ml-4 mt-3 text-white fill-current group-hover:scale-110 transition-transform duration-300"
+            >
+           <path d="M13.601 2.326A7.85 7.85 0 0 0 7.994 0C3.627 0 .068 3.558.064 7.926c0 1.399.366 2.76 1.057 3.965L0 16l4.204-1.102a7.9 7.9 0 0 0 3.79.965h.004c4.368 0 7.926-3.558 7.93-7.93A7.9 7.9 0 0 0 13.6 2.326zM7.994 14.521a6.6 6.6 0 0 1-3.356-.92l-.24-.144-2.494.654.666-2.433-.156-.251a6.56 6.56 0 0 1-1.007-3.505c0-3.626 2.957-6.584 6.591-6.584a6.56 6.56 0 0 1 4.66 1.931 6.56 6.56 0 0 1 1.928 4.66c-.004 3.639-2.961 6.592-6.592 6.592m3.615-4.934c-.197-.099-1.17-.578-1.353-.646-.182-.065-.315-.099-.445.099-.133.197-.513.646-.627.775-.114.133-.232.148-.43.05-.197-.1-.836-.308-1.592-.985-.59-.525-.985-1.175-1.103-1.372-.114-.198-.011-.304.088-.403.087-.088.197-.232.296-.346.1-.114.133-.198.198-.33.065-.134.034-.248-.015-.347-.05-.099-.445-1.076-.612-1.47-.16-.389-.323-.335-.445-.34-.114-.007-.247-.007-.38-.007a.73.73 0 0 0-.529.247c-.182.198-.691.677-.691 1.654s.71 1.916.81 2.049c.098.133 1.394 2.132 3.383 2.992.47.205.84.326 1.129.418.475.152.904.129 1.246.08.38-.058 1.171-.48 1.338-.943.164-.464.164-.86.114-.943-.049-.084-.182-.133-.38-.232"/>
+            </svg>
+           
           <div className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full flex items-center justify-center animate-pulse">
             <span className="text-xs font-bold text-white">!</span>
           </div>
@@ -445,7 +451,7 @@ function App() {
       </div>
 
       {/* Custom CSS for animations */}
-      <style jsx>{`
+      <style>{`
         @keyframes bounce-gentle {
           0%, 100% {
             transform: translateY(0);
@@ -1494,18 +1500,22 @@ function App() {
         </div>
       </section>
 
-      {/* Contact Section */}
-      <section className="py-24 px-4 bg-gradient-to-br from-slate-50 to-blue-50 relative">
-        <div className="max-w-6xl mx-auto">
+     {/* Contact Section */}
+      <section className="py-24 px-4 bg-gradient-to-br from-slate-900 to-purple-900 text-white relative overflow-hidden">
+        {/* Decorative background elements */}
+        <div className="pointer-events-none absolute -top-20 -left-20 w-64 h-64 bg-blue-600/10 rounded-full blur-3xl"></div>
+        <div className="pointer-events-none absolute -bottom-32 -right-32 w-96 h-96 bg-purple-600/10 rounded-full blur-3xl"></div>
+        
+        <div className="max-w-6xl mx-auto relative">
           <div className="text-center mb-20">
-            <div className="inline-flex items-center gap-2 bg-green-100 text-green-600 rounded-full px-4 py-2 mb-6 animate-fade-in-up">
+            <div className="inline-flex items-center gap-2 bg-green-500/20 text-green-400 border border-green-500/30 rounded-full px-4 py-2 mb-6 animate-fade-in-up backdrop-blur-sm">
               <MessageCircle className="w-4 h-4" />
               <span className="text-sm font-medium">Contact</span>
             </div>
-            <h2 className="text-4xl md:text-5xl font-bold text-slate-900 mb-6 animate-fade-in-up animation-delay-200">
-              Ready to Get More <span className="text-green-600">Reviews?</span>
+            <h2 className="text-4xl md:text-5xl font-bold text-white mb-6 animate-fade-in-up animation-delay-200">
+              Ready to Get More <span className="bg-gradient-to-r from-green-400 to-emerald-400 bg-clip-text text-transparent">Reviews?</span>
             </h2>
-            <p className="text-xl text-slate-600 animate-fade-in-up animation-delay-400">
+            <p className="text-xl text-slate-300 animate-fade-in-up animation-delay-400">
               Contact us on WhatsApp or Live Chat to get started today.
             </p>
           </div>
@@ -1515,47 +1525,47 @@ function App() {
               <form className="space-y-6">
                 <div className="grid md:grid-cols-2 gap-6">
                   <div>
-                    <label className="block text-sm font-semibold text-slate-700 mb-2">
+                    <label className="block text-sm font-semibold text-slate-300 mb-2">
                       Name
                     </label>
                     <input
                       type="text"
-                      className="w-full px-4 py-4 border border-slate-300 rounded-2xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300 hover:border-slate-400 bg-white"
+                      className="w-full px-4 py-4 bg-slate-800/50 border border-slate-600 text-white placeholder-slate-400 rounded-2xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 hover:border-slate-500 backdrop-blur-sm"
                       placeholder="Your full name"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-semibold text-slate-700 mb-2">
+                    <label className="block text-sm font-semibold text-slate-300 mb-2">
                       Email
                     </label>
                     <input
                       type="email"
-                      className="w-full px-4 py-4 border border-slate-300 rounded-2xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300 hover:border-slate-400 bg-white"
+                      className="w-full px-4 py-4 bg-slate-800/50 border border-slate-600 text-white placeholder-slate-400 rounded-2xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 hover:border-slate-500 backdrop-blur-sm"
                       placeholder="your@email.com"
                     />
                   </div>
                 </div>
                 <div>
-                  <label className="block text-sm font-semibold text-slate-700 mb-2">
+                  <label className="block text-sm font-semibold text-slate-300 mb-2">
                     Phone
                   </label>
                   <input
                     type="tel"
-                    className="w-full px-4 py-4 border border-slate-300 rounded-2xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300 hover:border-slate-400 bg-white"
+                    className="w-full px-4 py-4 bg-slate-800/50 border border-slate-600 text-white placeholder-slate-400 rounded-2xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 hover:border-slate-500 backdrop-blur-sm"
                     placeholder="+91 98765 43210"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-semibold text-slate-700 mb-2">
+                  <label className="block text-sm font-semibold text-slate-300 mb-2">
                     Message
                   </label>
                   <textarea
                     rows={4}
-                    className="w-full px-4 py-4 border border-slate-300 rounded-2xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300 hover:border-slate-400 bg-white resize-none"
+                    className="w-full px-4 py-4 bg-slate-800/50 border border-slate-600 text-white placeholder-slate-400 rounded-2xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 hover:border-slate-500 backdrop-blur-sm resize-none"
                     placeholder="Tell us about your business and how we can help..."
                   ></textarea>
                 </div>
-                <button className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white py-4 rounded-2xl font-semibold transition-all duration-300 transform hover:scale-105 hover:shadow-xl">
+                <button className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white py-4 rounded-2xl font-semibold transition-all duration-300 transform hover:scale-105 hover:shadow-2xl shadow-lg">
                   Send Message
                 </button>
               </form>
@@ -1563,7 +1573,7 @@ function App() {
 
             <div className="space-y-8 animate-slide-in-right animation-delay-300">
               <div>
-                <h3 className="text-2xl font-bold text-slate-900 mb-6">
+                <h3 className="text-2xl font-bold text-white mb-6">
                   Get in Touch
                 </h3>
                 <div className="space-y-6">
@@ -1571,41 +1581,44 @@ function App() {
                     {
                       icon: Mail,
                       text: "support@aireviews.com",
-                      color: "text-blue-600",
+                      color: "text-blue-400",
+                      bgColor: "bg-blue-500/10",
+                      hoverBg: "hover:bg-blue-500/20",
                     },
                     {
                       icon: MessageCircle,
-                      text: "WhatsApp: +91 98765 43210",
-                      color: "text-green-600",
+                      text: "WhatsApp: +91 94264 79677",
+                      color: "text-green-400",
+                      bgColor: "bg-green-500/10",
+                      hoverBg: "hover:bg-green-500/20",
                     },
                     {
                       icon: Phone,
-                      text: "Phone: +91 11-4567-8900",
-                      color: "text-purple-600",
+                      text: "Phone: +91 94264 79677",
+                      color: "text-purple-400",
+                      bgColor: "bg-purple-500/10",
+                      hoverBg: "hover:bg-purple-500/20",
                     },
                     {
                       icon: MapPin,
-                      text: "Office: Delhi, Mumbai, Bangalore",
-                      color: "text-red-600",
+                      text: "Office: Surat, Gujarat, India",
+                      color: "text-red-400",
+                      bgColor: "bg-red-500/10",
+                      hoverBg: "hover:bg-red-500/20",
                     },
                   ].map((contact, index) => {
                     const Icon = contact.icon;
                     return (
                       <div
                         key={index}
-                        className="flex items-center gap-4 p-4 bg-white rounded-2xl hover:shadow-lg transition-all duration-300 hover:scale-105 cursor-pointer group"
+                        className={`flex items-center gap-4 p-4 bg-slate-800/30 border border-slate-700/50 ${contact.hoverBg} rounded-2xl hover:shadow-lg hover:shadow-slate-900/20 transition-all duration-300 hover:scale-105 cursor-pointer group backdrop-blur-sm`}
                       >
                         <div
-                          className={`w-12 h-12 ${contact.color
-                            .replace("text-", "bg-")
-                            .replace(
-                              "-600",
-                              "-100"
-                            )} rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform`}
+                          className={`w-12 h-12 ${contact.bgColor} rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform`}
                         >
                           <Icon className={`w-6 h-6 ${contact.color}`} />
                         </div>
-                        <span className="text-slate-700 font-medium group-hover:text-slate-900 transition-colors">
+                        <span className="text-slate-300 font-medium group-hover:text-white transition-colors">
                           {contact.text}
                         </span>
                       </div>
@@ -1614,15 +1627,18 @@ function App() {
                 </div>
               </div>
 
-              <div className="bg-gradient-to-br from-green-50 to-blue-50 p-8 rounded-3xl hover:shadow-lg transition-all duration-300 hover:scale-105">
-                <h4 className="text-xl font-bold text-slate-900 mb-3">
+              <div className="bg-gradient-to-br from-slate-800/50 to-slate-700/50 border border-slate-600/50 p-8 rounded-3xl hover:shadow-lg hover:shadow-slate-900/20 transition-all duration-300 hover:scale-105 backdrop-blur-sm">
+                <h4 className="text-xl font-bold text-white mb-3">
                   Quick Start Support
                 </h4>
-                <p className="text-slate-600 mb-6 leading-relaxed">
+                <p className="text-slate-300 mb-6 leading-relaxed">
                   Get your first QR code and start collecting reviews in under 5
                   minutes with our dedicated onboarding team.
                 </p>
-                <button className="bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 text-white px-8 py-3 rounded-2xl font-semibold transition-all duration-300 flex items-center gap-3 transform hover:scale-105 hover:shadow-xl">
+                <button 
+                  onClick={() => window.open('https://wa.me/9426479677', '_blank')}
+                  className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white px-8 py-3 rounded-2xl font-semibold transition-all duration-300 flex items-center gap-3 transform hover:scale-105 hover:shadow-xl shadow-lg"
+                >
                   <MessageCircle className="w-5 h-5" />
                   WhatsApp Support
                 </button>
