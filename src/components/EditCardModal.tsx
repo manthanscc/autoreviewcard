@@ -22,7 +22,8 @@ export const EditCardModal: React.FC<EditCardModalProps> = ({ card, onClose, onS
     location: card.location || '',
     services: card.services || [],
     logoUrl: card.logoUrl,
-    googleMapsUrl: card.googleMapsUrl
+    googleMapsUrl: card.googleMapsUrl,
+    tagline: card.tagline || '' // <--- added
   });
   
   // AI Review Generation State
@@ -169,6 +170,7 @@ export const EditCardModal: React.FC<EditCardModalProps> = ({ card, onClose, onS
         slug: generateSlug(formData.businessName),
         logoUrl: formData.logoUrl,
         googleMapsUrl: formData.googleMapsUrl.trim(),
+        tagline: formData.tagline.trim(), // <--- added
         updatedAt: new Date().toISOString()
       };
 
@@ -318,6 +320,35 @@ export const EditCardModal: React.FC<EditCardModalProps> = ({ card, onClose, onS
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
                 />
                 <p className="text-xs text-gray-500 mt-1">This helps generate more relevant reviews</p>
+              </div>
+
+              {/* Tagline */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Tagline
+                </label>
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    value={formData.tagline}
+                    onChange={(e) => handleInputChange('tagline', e.target.value)}
+                    placeholder="Short catchy line (max 255 chars)"
+                    maxLength={255}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  />
+                  {aiReviewData.generatedTagline && (
+                    <button
+                      type="button"
+                      onClick={() => handleInputChange('tagline', aiReviewData.generatedTagline)}
+                      className="px-3 py-2 text-xs bg-purple-100 text-purple-700 rounded-lg hover:bg-purple-200"
+                    >
+                      Use AI
+                    </button>
+                  )}
+                </div>
+                <p className="text-xs text-gray-500 mt-1">
+                  Optional. Generated in AI Tools if needed.
+                </p>
               </div>
 
               {/* Location */}

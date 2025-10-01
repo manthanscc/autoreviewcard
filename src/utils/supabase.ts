@@ -77,6 +77,7 @@ export interface Database {
           slug: string;
           logo_url: string | null;
           google_maps_url: string;
+          tagline: string | null; // <--- added
           created_at: string;
           updated_at: string;
         };
@@ -91,6 +92,7 @@ export interface Database {
           slug: string;
           logo_url?: string | null;
           google_maps_url: string;
+          tagline?: string | null; // <--- added
           created_at?: string;
           updated_at?: string;
         };
@@ -105,6 +107,7 @@ export interface Database {
           slug?: string;
           logo_url?: string | null;
           google_maps_url?: string;
+          tagline?: string | null; // <--- added
           created_at?: string;
           updated_at?: string;
         };

@@ -21,6 +21,7 @@ const transformDbRowToCard = (row: any): ReviewCard => ({
   slug: row.slug,
   logoUrl: row.logo_url || '',
   googleMapsUrl: row.google_maps_url,
+  tagline: row.tagline || '', // <--- added
   createdAt: row.created_at,
   updatedAt: row.updated_at
 });
@@ -37,6 +38,7 @@ const transformCardToDbInsert = (card: ReviewCard) => {
     slug: card.slug,
     logo_url: card.logoUrl || null,
     google_maps_url: card.googleMapsUrl,
+    tagline: card.tagline || null, // <--- added
     created_at: card.createdAt || new Date().toISOString(),
     updated_at: card.updatedAt || new Date().toISOString()
   };
@@ -60,6 +62,7 @@ const transformCardToDbUpdate = (card: ReviewCard) => ({
   slug: card.slug,
   logo_url: card.logoUrl || null,
   google_maps_url: card.googleMapsUrl,
+  tagline: card.tagline || null, // <--- added
   updated_at: new Date().toISOString()
 });
 

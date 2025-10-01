@@ -9,6 +9,7 @@ export interface ReviewCard {
   slug: string;
   logoUrl: string;
   googleMapsUrl: string;
+  tagline?: string; // <--- added
   createdAt: string;
   updatedAt: string;
 }
