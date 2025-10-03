@@ -21,9 +21,10 @@ const transformDbRowToCard = (row: any): ReviewCard => ({
   slug: row.slug,
   logoUrl: row.logo_url || '',
   googleMapsUrl: row.google_maps_url,
-  tagline: row.tagline || '', // <--- added
+  tagline: row.tagline || '',
   createdAt: row.created_at,
-  updatedAt: row.updated_at
+  updatedAt: row.updated_at,
+  viewCount: row.view_count ?? 0
 });
 
 // Transform ReviewCard to database insert format
@@ -38,9 +39,10 @@ const transformCardToDbInsert = (card: ReviewCard) => {
     slug: card.slug,
     logo_url: card.logoUrl || null,
     google_maps_url: card.googleMapsUrl,
-    tagline: card.tagline || null, // <--- added
+    tagline: card.tagline || null,
     created_at: card.createdAt || new Date().toISOString(),
-    updated_at: card.updatedAt || new Date().toISOString()
+    updated_at: card.updatedAt || new Date().toISOString(),
+    view_count: card.viewCount ?? 0
   };
 
   // Only include id if it's a valid UUID, otherwise let Supabase generate one
@@ -62,8 +64,9 @@ const transformCardToDbUpdate = (card: ReviewCard) => ({
   slug: card.slug,
   logo_url: card.logoUrl || null,
   google_maps_url: card.googleMapsUrl,
-  tagline: card.tagline || null, // <--- added
-  updated_at: new Date().toISOString()
+  tagline: card.tagline || null,
+  updated_at: new Date().toISOString(),
+  view_count: card.viewCount ?? 0
 });
 
 export const storage = {
@@ -88,7 +91,8 @@ export const storage = {
 
   _addLocalCard(card: ReviewCard): void {
     const cards = this._getLocalCards();
-    cards.unshift(card);
+    const newCard = { ...card, viewCount: card.viewCount ?? 0 };
+    cards.unshift(newCard);
     this._saveLocalCards(cards);
   },
 
@@ -96,7 +100,7 @@ export const storage = {
     const cards = this._getLocalCards();
     const index = cards.findIndex(card => card.id === updatedCard.id);
     if (index !== -1) {
-      cards[index] = updatedCard;
+      cards[index] = { ...updatedCard, viewCount: updatedCard.viewCount ?? cards[index].viewCount ?? 0 };
       this._saveLocalCards(cards);
     }
   },
@@ -430,5 +434,49 @@ export const storage = {
     } catch (error) {
       console.error('Error during data sync:', error);
     }
-  }
+  },
+
+  async incrementViewCount(cardId: string): Promise<number | null> {
+    const cards = this._getLocalCards();
+    const index = cards.findIndex(c => c.id === cardId);
+    if (index === -1) return null;
+
+    // Increment locally first
+    let newCount = (cards[index].viewCount ?? 0) + 1;
+    cards[index] = {
+      ...cards[index],
+      viewCount: newCount,
+      updatedAt: new Date().toISOString()
+    };
+    this._saveLocalCards(cards);
+
+    // Cloud sync
+    if (isSupabaseConfigured() && supabase) {
+      try {
+        const { data, error } = await supabase
+          .from('review_cards')
+          .update({ view_count: newCount, updated_at: new Date().toISOString() })
+          .eq('id', cardId)
+          .select('view_count')
+          .single();
+
+        if (!error && data?.view_count !== undefined) {
+          newCount = data.view_count;
+          cards[index].viewCount = newCount;
+          this._saveLocalCards(cards);
+        } else if (error) {
+          console.warn('Supabase view count update failed, keeping local value:', error.message);
+        }
+      } catch (e) {
+        console.warn('Supabase view count update exception, keeping local value:', e);
+      }
+    }
+
+    return newCount;
+  },
+
+  // Utility (optional) to total views
+  getTotalViews(): number {
+    return this._getLocalCards().reduce((sum, c) => sum + (c.viewCount ?? 0), 0);
+  },
 };

@@ -3,15 +3,16 @@ export interface ReviewCard {
   businessName: string;
   category: string;
   type: string;
+  slug: string;
+  logoUrl?: string;
+  googleMapsUrl: string;
+  tagline?: string;
   description?: string;
   location?: string;
   services?: string[];
-  slug: string;
-  logoUrl: string;
-  googleMapsUrl: string;
-  tagline?: string; // <--- added
   createdAt: string;
   updatedAt: string;
+  viewCount?: number;
 }
 
 export interface ReviewTemplates {

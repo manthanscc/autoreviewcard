@@ -6,16 +6,24 @@ import {
   ArrowLeft,
   Sparkles,
   RefreshCw,
+  Eye
 } from "lucide-react";
 import { ReviewCard } from "../types";
 import { StarRating } from "./StarRating";
 import { SegmentedButtonGroup } from "./SegmentedButtonGroup";
 import { ServiceSelector } from "./ServiceSelector";
 import { aiService } from "../utils/aiService";
+import { storage } from "../utils/storage";
 import { Link } from "react-router-dom";
 
 interface CompactReviewCardViewProps {
   card: ReviewCard;
+}
+
+declare global {
+  interface Window {
+    __vcInc?: Record<string, boolean>;
+  }
 }
 
 export const CompactReviewCardView: React.FC<CompactReviewCardViewProps> = ({
@@ -31,6 +39,7 @@ export const CompactReviewCardView: React.FC<CompactReviewCardViewProps> = ({
   const [copied, setCopied] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
   const [showAdvanced, setShowAdvanced] = useState(false);
+  const [viewCount, setViewCount] = useState(card.viewCount ?? 0);
 
   const languageOptions = ["English", "Gujarati", "Hindi"];
 
@@ -40,6 +49,30 @@ export const CompactReviewCardView: React.FC<CompactReviewCardViewProps> = ({
     // Generate initial review when component loads
     generateReviewForRating(5, "English", "Friendly", []);
   }, []);
+
+  useEffect(() => {
+    // Ensure local state syncs if parent passes updated value
+    setViewCount(card.viewCount ?? 0);
+  }, [card.id, card.viewCount]);
+
+  // REMOVE the old increment effect and REPLACE with this guarded one:
+  // Old effect started with: useEffect(() => { let isMounted = true; ... }, [card.id]);
+  // New guarded effect (prevents React StrictMode double increment but still counts on refresh)
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    if (!window.__vcInc) window.__vcInc = {};
+    if (window.__vcInc[card.id]) return; // already incremented this load (prevents +2 in dev StrictMode)
+    window.__vcInc[card.id] = true;
+
+    (async () => {
+      const next = await storage.incrementViewCount(card.id);
+      if (typeof next === "number") {
+        setViewCount(next);
+      } else {
+        setViewCount(v => v + 1);
+      }
+      })();
+  }, [card.id]);
 
   const generateReviewForRating = async (
     rating: number,
@@ -243,7 +276,13 @@ export const CompactReviewCardView: React.FC<CompactReviewCardViewProps> = ({
           <h1 className="text-2xl font-bold text-white mb-2 bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
             {card.businessName}
           </h1>
-          <p className="text-blue-200 text-sm">AI-Powered Review System</p>
+          <div className="flex flex-col items-center gap-1">
+            <p className="text-blue-200 text-sm">AI-Powered Review System</p>
+            <p className="text-blue-200 text-xs flex items-center gap-1">
+              <Eye className="w-3 h-3" />
+              {viewCount.toLocaleString()} views
+            </p>
+          </div>
         </div>
 
         {/* Main Card */}

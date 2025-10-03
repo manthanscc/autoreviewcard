@@ -1,37 +1,39 @@
-import React, { useState, useEffect } from "react";
-import { Rocket, ArrowRight, Play, Star, Users, Award, Clock } from "lucide-react";
+import React from 'react';
+import { Star, Users, Award, Clock, Rocket, ArrowRight, Play } from 'lucide-react';
 
-interface HeroSectionProps {}
+interface HeroPageProps {
+  isVisible: boolean;
+  scrollToContact: () => void;
+}
 
-const HeroSection: React.FC<HeroSectionProps> = () => {
-  const [isVisible, setIsVisible] = useState(false);
+const stats = [
+  {
+    icon: Star,
+    value: "50,000+",
+    label: "Reviews Generated",
+    color: "text-yellow-500",
+  },
+  {
+    icon: Users,
+    value: "2,500+",
+    label: "Active Users",
+    color: "text-blue-500",
+  },
+  {
+    icon: Award,
+    value: "4.9",
+    label: "Average Rating",
+    color: "text-green-500",
+  },
+  { 
+    icon: Clock, 
+    value: "24/7", 
+    label: "Support", 
+    color: "text-purple-500" 
+  },
+];
 
-  useEffect(() => {
-    setIsVisible(true);
-  }, []);
-
-  const stats = [
-    {
-      icon: Star,
-      value: "50,000+",
-      label: "Reviews Generated",
-      color: "text-yellow-500",
-    },
-    {
-      icon: Users,
-      value: "2,500+",
-      label: "Active Users",
-      color: "text-blue-500",
-    },
-    {
-      icon: Award,
-      value: "4.9",
-      label: "Average Rating",
-      color: "text-green-500",
-    },
-    { icon: Clock, value: "24/7", label: "Support", color: "text-purple-500" },
-  ];
-
+export const Heropage: React.FC<HeroPageProps> = ({ isVisible, scrollToContact }) => {
   return (
     <section className="relative min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 text-white overflow-hidden">
       {/* Animated Background */}
@@ -72,7 +74,10 @@ const HeroSection: React.FC<HeroSectionProps> = () => {
           </p>
 
           <div className="flex flex-col sm:flex-row gap-6 justify-center mb-16 animate-fade-in-up animation-delay-600">
-            <button className="group relative bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 px-8 py-4 rounded-2xl font-semibold text-lg transition-all duration-300 transform hover:scale-105 hover:shadow-2xl shadow-lg overflow-hidden">
+            <button
+              onClick={scrollToContact}
+              className="group relative bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 px-8 py-4 rounded-2xl font-semibold text-lg transition-all duration-300 transform hover:scale-105 hover:shadow-2xl shadow-lg overflow-hidden focus:outline-none focus:ring-4 focus:ring-orange-400/40"
+            >
               <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700"></div>
               <span className="relative flex items-center gap-2">
                 Start Getting Reviews Today
@@ -118,4 +123,4 @@ const HeroSection: React.FC<HeroSectionProps> = () => {
   );
 };
 
-export default HeroSection;
+export default Heropage;

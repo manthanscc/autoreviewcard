@@ -1,66 +1,76 @@
-import React from "react";
-import { Globe, Stethoscope, Scissors, Hotel, Dumbbell, Utensils, Car, Building, Coffee } from "lucide-react";
+import React from 'react';
+import { 
+  Globe, 
+  Stethoscope, 
+  Scissors, 
+  Hotel, 
+  Dumbbell, 
+  Utensils, 
+  Car, 
+  Building, 
+  Coffee 
+} from 'lucide-react';
 
-const IndustriesSection: React.FC = () => {
-  const industries = [
-    {
-      name: "Healthcare",
-      icon: Stethoscope,
-      color: "from-blue-500 to-blue-600",
-      bgColor: "bg-blue-50",
-      textColor: "text-blue-600",
-    },
-    {
-      name: "Salons & Spas",
-      icon: Scissors,
-      color: "from-pink-500 to-pink-600",
-      bgColor: "bg-pink-50",
-      textColor: "text-pink-600",
-    },
-    {
-      name: "Hotels",
-      icon: Hotel,
-      color: "from-purple-500 to-purple-600",
-      bgColor: "bg-purple-50",
-      textColor: "text-purple-600",
-    },
-    {
-      name: "Gyms",
-      icon: Dumbbell,
-      color: "from-green-500 to-green-600",
-      bgColor: "bg-green-50",
-      textColor: "text-green-600",
-    },
-    {
-      name: "Restaurants",
-      icon: Utensils,
-      color: "from-orange-500 to-orange-600",
-      bgColor: "bg-orange-50",
-      textColor: "text-orange-600",
-    },
-    {
-      name: "Auto Shops",
-      icon: Car,
-      color: "from-red-500 to-red-600",
-      bgColor: "bg-red-50",
-      textColor: "text-red-600",
-    },
-    {
-      name: "Offices",
-      icon: Building,
-      color: "from-indigo-500 to-indigo-600",
-      bgColor: "bg-indigo-50",
-      textColor: "text-indigo-600",
-    },
-    {
-      name: "Cafes",
-      icon: Coffee,
-      color: "from-amber-500 to-amber-600",
-      bgColor: "bg-amber-50",
-      textColor: "text-amber-600",
-    },
-  ];
+const industries = [
+  {
+    name: "Healthcare",
+    icon: Stethoscope,
+    color: "from-blue-500 to-blue-600",
+    bgColor: "bg-blue-50",
+    textColor: "text-blue-600",
+  },
+  {
+    name: "Salons & Spas",
+    icon: Scissors,
+    color: "from-pink-500 to-pink-600",
+    bgColor: "bg-pink-50",
+    textColor: "text-pink-600",
+  },
+  {
+    name: "Hotels",
+    icon: Hotel,
+    color: "from-purple-500 to-purple-600",
+    bgColor: "bg-purple-50",
+    textColor: "text-purple-600",
+  },
+  {
+    name: "Gyms",
+    icon: Dumbbell,
+    color: "from-green-500 to-green-600",
+    bgColor: "bg-green-50",
+    textColor: "text-green-600",
+  },
+  {
+    name: "Restaurants",
+    icon: Utensils,
+    color: "from-orange-500 to-orange-600",
+    bgColor: "bg-orange-50",
+    textColor: "text-orange-600",
+  },
+  {
+    name: "Auto Shops",
+    icon: Car,
+    color: "from-red-500 to-red-600",
+    bgColor: "bg-red-50",
+    textColor: "text-red-600",
+  },
+  {
+    name: "Offices",
+    icon: Building,
+    color: "from-indigo-500 to-indigo-600",
+    bgColor: "bg-indigo-50",
+    textColor: "text-indigo-600",
+  },
+  {
+    name: "Cafes",
+    icon: Coffee,
+    color: "from-amber-500 to-amber-600",
+    bgColor: "bg-amber-50",
+    textColor: "text-amber-600",
+  },
+];
 
+export const Industries: React.FC = () => {
   return (
     <section className="py-24 px-4 bg-gradient-to-br from-slate-50 to-blue-50 relative">
       <div className="max-w-7xl mx-auto">
@@ -110,4 +120,4 @@ const IndustriesSection: React.FC = () => {
   );
 };
 
-export default IndustriesSection;
+export default Industries;

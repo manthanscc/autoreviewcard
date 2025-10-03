@@ -1,38 +1,38 @@
-import React from "react";
-import { Target, Heart, Clock, Settings } from "lucide-react";
+import React from 'react';
+import { Heart, Clock, Target, Settings } from 'lucide-react';
 
-const ProblemSection: React.FC = () => {
-  const problems = [
-    {
-      icon: Heart,
-      title: "Too Awkward",
-      desc: "Asking customers directly feels pushy and uncomfortable",
-      color: "from-red-500 to-pink-500",
-      bg: "bg-red-50",
-    },
-    {
-      icon: Clock,
-      title: "Takes Time",
-      desc: "Staff waste time explaining instead of serving customers",
-      color: "from-orange-500 to-yellow-500",
-      bg: "bg-orange-50",
-    },
-    {
-      icon: Target,
-      title: "Customers Forget",
-      desc: "Even willing customers forget by the time they get home",
-      color: "from-purple-500 to-indigo-500",
-      bg: "bg-purple-50",
-    },
-    {
-      icon: Settings,
-      title: "Complex Process",
-      desc: "Finding and reviewing on Google is more complicated than it should be",
-      color: "from-blue-500 to-cyan-500",
-      bg: "bg-blue-50",
-    },
-  ];
+const problems = [
+  {
+    icon: Heart,
+    title: "Too Awkward",
+    desc: "Asking customers directly feels pushy and uncomfortable",
+    color: "from-red-500 to-pink-500",
+    bg: "bg-red-50",
+  },
+  {
+    icon: Clock,
+    title: "Takes Time",
+    desc: "Staff waste time explaining instead of serving customers",
+    color: "from-orange-500 to-yellow-500",
+    bg: "bg-orange-50",
+  },
+  {
+    icon: Target,
+    title: "Customers Forget",
+    desc: "Even willing customers forget by the time they get home",
+    color: "from-purple-500 to-indigo-500",
+    bg: "bg-purple-50",
+  },
+  {
+    icon: Settings,
+    title: "Complex Process",
+    desc: "Finding and reviewing on Google is more complicated than it should be",
+    color: "from-blue-500 to-cyan-500",
+    bg: "bg-blue-50",
+  },
+];
 
+export const Problem: React.FC = () => {
   return (
     <section className="py-24 px-4 bg-gradient-to-br from-slate-50 to-blue-50/30 relative">
       <div className="max-w-7xl mx-auto">
@@ -46,8 +46,8 @@ const ProblemSection: React.FC = () => {
             <span className="text-red-500">Manually Fails</span>
           </h2>
           <p className="text-xl text-slate-600 max-w-3xl mx-auto animate-fade-in-up animation-delay-400">
-            Traditional methods create barriers that prevent satisfied customers
-            from sharing their positive experiences.
+            Traditional methods create barriers that prevent satisfied
+            customers from sharing their positive experiences.
           </p>
         </div>
 
@@ -83,4 +83,4 @@ const ProblemSection: React.FC = () => {
   );
 };
 
-export default ProblemSection;
+export default Problem;

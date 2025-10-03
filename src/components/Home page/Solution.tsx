@@ -1,38 +1,38 @@
-import React from "react";
-import { Sparkles, QrCode, CheckCircle, Star } from "lucide-react";
+import React from 'react';
+import { QrCode, Sparkles, CheckCircle, Star } from 'lucide-react';
 
-const SolutionSection: React.FC = () => {
-  const steps = [
-    {
-      icon: QrCode,
-      title: "Scan QR Code",
-      desc: "Customer scans your custom QR code with their smartphone",
-      color: "from-blue-500 to-blue-600",
-      step: "1",
-    },
-    {
-      icon: Sparkles,
-      title: "AI Suggestion",
-      desc: "AI generates a personalized review based on their experience",
-      color: "from-purple-500 to-purple-600",
-      step: "2",
-    },
-    {
-      icon: CheckCircle,
-      title: "Customer Approves",
-      desc: "Customer reviews and approves the AI-generated content",
-      color: "from-green-500 to-green-600",
-      step: "3",
-    },
-    {
-      icon: Star,
-      title: "Review Posted",
-      desc: "Review is instantly published to your Google Business Profile",
-      color: "from-orange-500 to-red-500",
-      step: "4",
-    },
-  ];
+const solutionSteps = [
+  {
+    icon: QrCode,
+    title: "Scan QR Code",
+    desc: "Customer scans your custom QR code with their smartphone",
+    color: "from-blue-500 to-blue-600",
+    step: "1",
+  },
+  {
+    icon: Sparkles,
+    title: "AI Suggestion",
+    desc: "AI generates a personalized review based on their experience",
+    color: "from-purple-500 to-purple-600",
+    step: "2",
+  },
+  {
+    icon: CheckCircle,
+    title: "Customer Approves",
+    desc: "Customer reviews and approves the AI-generated content",
+    color: "from-green-500 to-green-600",
+    step: "3",
+  },
+  {
+    icon: Star,
+    title: "Review Posted",
+    desc: "Review is instantly published to your Google Business Profile",
+    color: "from-orange-500 to-red-500",
+    step: "4",
+  },
+];
 
+export const Solution: React.FC = () => {
   return (
     <section className="py-24 px-4 bg-gradient-to-br from-white to-slate-50 relative overflow-hidden">
       <div className="absolute inset-0 bg-gradient-to-r from-blue-50/50 via-transparent to-purple-50/50"></div>
@@ -58,7 +58,7 @@ const SolutionSection: React.FC = () => {
           {/* Connection Lines */}
           <div className="hidden md:block absolute top-1/2 left-0 right-0 h-0.5 bg-gradient-to-r from-blue-200 via-purple-200 to-pink-200 transform -translate-y-1/2 z-0"></div>
 
-          {steps.map((step, index) => {
+          {solutionSteps.map((step, index) => {
             const Icon = step.icon;
             return (
               <div
@@ -92,4 +92,4 @@ const SolutionSection: React.FC = () => {
   );
 };
 
-export default SolutionSection;
+export default Solution;

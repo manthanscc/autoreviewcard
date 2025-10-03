@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Plus, Edit, Trash2, Eye, Search, Building2, Calendar, LogOut, Database, Loader2, Wifi, WifiOff, RefreshCw, QrCode } from 'lucide-react';
+import { Plus, Edit, Trash2, Eye, Search, Building2, Calendar, LogOut, Database, Loader2, Wifi, WifiOff, RefreshCw, QrCode, BarChart3 } from 'lucide-react';
 import { ReviewCard } from '../types';
 import { storage } from '../utils/storage';
 import { formatDate } from '../utils/helpers';
@@ -9,6 +9,7 @@ import { ConfirmDialog } from './ConfirmDialog';
 import { QRCodeCard } from './QRCodeCard';
 import { auth } from '../utils/auth';
 import { isSupabaseConfigured } from '../utils/supabase';
+import { AnalyticsDashboard } from './Analytics/AnalyticsDashboard';
 
 export const AdminDashboard: React.FC = () => {
   const [cards, setCards] = useState<ReviewCard[]>([]);
@@ -20,6 +21,7 @@ export const AdminDashboard: React.FC = () => {
   const [isMigrating, setIsMigrating] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [connectionStatus, setConnectionStatus] = useState<'connected' | 'local' | 'checking'>('checking');
+  const [activeView, setActiveView] = useState<'cards' | 'analytics'>('cards');
 
   useEffect(() => {
     initializeDashboard();
@@ -181,6 +183,8 @@ export const AdminDashboard: React.FC = () => {
     }
   };
 
+  const totalViews = cards.reduce((sum, c) => sum + (c.viewCount ?? 0), 0);
+
   if (isMigrating) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex items-center justify-center">
@@ -212,237 +216,315 @@ export const AdminDashboard: React.FC = () => {
 
       <div className="relative z-10 container mx-auto px-4 py-8">
         {/* Header */}
-        <div className="text-center mb-12">
-          <div className="flex justify-between items-center mb-4">
-            {getConnectionStatusDisplay()}
-            <div className="flex items-center gap-3">
+        <div className="text-center mb-8">
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-4">
+            <div className="flex items-center gap-3 flex-wrap justify-center md:justify-start">
+              {getConnectionStatusDisplay()}
+            </div>
+            <div className="inline-flex bg-white/10 border border-white/20 rounded-xl p-2 shadow-md">
               <button
-                onClick={handleRefresh}
-                disabled={isRefreshing}
-                className="inline-flex items-center px-3 py-2 bg-blue-600/20 text-blue-400 rounded-lg hover:bg-blue-600/30 transition-colors duration-200 disabled:opacity-50"
-                title="Refresh Data"
+              onClick={() => setActiveView('cards')}
+              className={`px-6 py-2.5 text-base font-semibold rounded-lg transition ${
+                activeView === 'cards'
+                ? 'bg-white text-slate-900 shadow-lg'
+                : 'text-white/80 hover:bg-white/10'
+              }`}
               >
-                <RefreshCw className={`w-4 h-4 mr-2 ${isRefreshing ? 'animate-spin' : ''}`} />
-                {isRefreshing ? 'Syncing...' : 'Refresh'}
+              Cards
               </button>
               <button
-                onClick={handleLogout}
-                className="inline-flex items-center px-4 py-2 bg-red-600/20 text-red-400 rounded-lg hover:bg-red-600/30 transition-colors duration-200"
+              onClick={() => setActiveView('analytics')}
+              className={`ml-2 px-6 py-2.5 text-base font-semibold rounded-lg transition ${
+                activeView === 'analytics'
+                ? 'bg-white text-slate-900 shadow-lg'
+                : 'text-white/80 hover:bg-white/10'
+              }`}
               >
-                <LogOut className="w-4 h-4 mr-2" />
-                Logout
+              Analytics
               </button>
             </div>
-          </div>
-          <h1 className="text-4xl lg:text-5xl font-bold text-white mb-4 bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
-            Auto Review Cards Dashboard
-          </h1>
-          <p className="text-slate-300">
+            <div className="flex items-center gap-3 justify-center md:justify-end">
+               <button
+                 onClick={handleRefresh}
+                 disabled={isRefreshing}
+                 className="inline-flex items-center px-3 py-2 bg-blue-600/20 text-blue-400 rounded-lg hover:bg-blue-600/30 transition-colors duration-200 disabled:opacity-50"
+                 title="Refresh Data"
+               >
+                 <RefreshCw className={`w-4 h-4 mr-2 ${isRefreshing ? 'animate-spin' : ''}`} />
+                 {isRefreshing ? 'Syncing...' : 'Refresh'}
+               </button>
+               <button
+                 onClick={handleLogout}
+                 className="inline-flex items-center px-4 py-2 bg-red-600/20 text-red-400 rounded-lg hover:bg-red-600/30 transition-colors duration-200"
+               >
+                 <LogOut className="w-4 h-4 mr-2" />
+                 Logout
+               </button>
+             </div>
+           </div>
+          {/* <p className="text-slate-300">
             {connectionStatus === 'connected' 
               ? 'Your review cards are synced across all devices' 
               : 'Managing review cards locally'
             }
-          </p>
+          </p> */}
         </div>
 
-        {/* Controls */}
-        <div className="flex flex-col sm:flex-row gap-4 mb-8">
-          <div className="flex-1 relative">
-            <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-400 w-5 h-5" />
-            <input
-              type="text"
-              placeholder="Search cards by business name or slug..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-12 pr-4 py-3 bg-white/10 backdrop-blur-md border border-white/20 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300"
-            />
-          </div>
-          <button
-            onClick={() => setShowAddModal(true)}
-            className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold rounded-xl hover:from-blue-700 hover:to-purple-700 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105"
-          >
-            <Plus className="w-5 h-5 mr-2" />
-            Add New Card
-          </button>
-        </div>
-
-        {/* Stats */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-8">
-          <div className="bg-white/10 backdrop-blur-md rounded-xl p-6 border border-white/20">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-slate-400 text-sm font-medium">Total Cards</p>
-                <p className="text-3xl font-bold text-white">{cards.length}</p>
+        {activeView === 'cards' ? (
+          <>
+            {/* Controls */}
+            <div className="flex flex-col sm:flex-row gap-4 mb-8">
+              <div className="flex-1 relative">
+                <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-400 w-5 h-5" />
+                <input
+                  type="text"
+                  placeholder="Search cards by business name or slug..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="w-full pl-12 pr-4 py-3 bg-white/10 backdrop-blur-md border border-white/20 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300"
+                />
               </div>
-              <div className="w-12 h-12 bg-blue-500/20 rounded-lg flex items-center justify-center">
-                <Building2 className="w-6 h-6 text-blue-400" />
-              </div>
-            </div>
-          </div>
-          <div className="bg-white/10 backdrop-blur-md rounded-xl p-6 border border-white/20">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-slate-400 text-sm font-medium">Active Today</p>
-                <p className="text-3xl font-bold text-white">{cards.length}</p>
-              </div>
-              <div className="w-12 h-12 bg-green-500/20 rounded-lg flex items-center justify-center">
-                <Eye className="w-6 h-6 text-green-400" />
-              </div>
-            </div>
-          </div>
-          <div className="bg-white/10 backdrop-blur-md rounded-xl p-6 border border-white/20">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-slate-400 text-sm font-medium">This Month</p>
-                <p className="text-3xl font-bold text-white">{cards.filter(card => {
-                  const cardDate = new Date(card.createdAt);
-                  const now = new Date();
-                  return cardDate.getMonth() === now.getMonth() && cardDate.getFullYear() === now.getFullYear();
-                }).length}</p>
-              </div>
-              <div className="w-12 h-12 bg-purple-500/20 rounded-lg flex items-center justify-center">
-                <Calendar className="w-6 h-6 text-purple-400" />
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Loading State */}
-        {isLoading ? (
-          <div className="text-center py-16">
-            <div className="w-16 h-16 bg-blue-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
-              <Loader2 className="w-8 h-8 text-blue-400 animate-spin" />
-            </div>
-            <h3 className="text-2xl font-semibold text-white mb-2">Loading Cards</h3>
-            <p className="text-slate-400">
-              {connectionStatus === 'connected' 
-                ? 'Fetching your review cards from cloud storage...' 
-                : 'Loading your review cards from local storage...'
-              }
-            </p>
-          </div>
-        ) : filteredCards.length === 0 ? (
-          <div className="text-center py-16">
-            <div className="w-24 h-24 bg-slate-700/50 rounded-full flex items-center justify-center mx-auto mb-6">
-              <Building2 className="w-12 h-12 text-slate-400" />
-            </div>
-            <h3 className="text-2xl font-semibold text-white mb-2">
-              {searchTerm ? 'No cards found' : 'No review cards yet'}
-            </h3>
-            <p className="text-slate-400 mb-8 max-w-md mx-auto">
-              {searchTerm 
-                ? 'Try adjusting your search terms or create a new card.'
-                : 'Get started by creating your first review card for your business.'
-              }
-            </p>
-            {!searchTerm && (
               <button
                 onClick={() => setShowAddModal(true)}
                 className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold rounded-xl hover:from-blue-700 hover:to-purple-700 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105"
               >
                 <Plus className="w-5 h-5 mr-2" />
-                Create Your First Card
+                Add New Card
               </button>
-            )}
-          </div>
-        ) : (
-          <div className="space-y-8">
-            {/* Review Cards Grid */}
-            <div>
-              <h2 className="text-2xl font-bold text-white mb-6 flex items-center">
-                <Building2 className="w-6 h-6 mr-3" />
-                Review Cards ({filteredCards.length})
-              </h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {filteredCards.map((card) => (
-                  <div
-                    key={card.id}
-                    className="bg-white/10 backdrop-blur-md rounded-xl border border-white/20 overflow-hidden hover:bg-white/15 transition-all duration-300 transform hover:scale-105 hover:shadow-2xl"
-                  >
-                    <div className="p-6">
-                      <div className="flex items-center mb-4">
-                        <div className="w-12 h-12 bg-white rounded-lg flex items-center justify-center mr-4 shadow-lg">
-                          {card.logoUrl ? (
-                            <img
-                              src={card.logoUrl}
-                              alt={`${card.businessName} logo`}
-                              className="w-8 h-8 object-contain"
-                            />
-                          ) : (
-                            <Building2 className="w-6 h-6 text-gray-600" />
-                          )}
-                        </div>
-                        <div className="flex-1">
-                          <h3 className="text-lg font-semibold text-white truncate">
-                            {card.businessName}
-                          </h3>
-                          <p className="text-sm text-slate-400">/{card.slug}</p>
-                        </div>
-                      </div>
+            </div>
 
-                      <div className="mb-4">
-                        <p className="text-xs text-slate-400 mb-1">Category</p>
-                        <p className="text-sm text-slate-300">{card.category}</p>
-                        <p className="text-xs text-slate-400 mb-1 mt-2">Type</p>
-                        <p className="text-sm text-slate-300">{card.type}</p>
-                        <p className="text-xs text-slate-400 mb-1 mt-2">Created</p>
-                        <p className="text-sm text-slate-300">{formatDate(card.createdAt)}</p>
-                      </div>
-
-                      <div className="flex gap-2">
-                        <button
-                          onClick={() => handlePreview(card.slug)}
-                          className="flex-1 inline-flex items-center justify-center px-3 py-2 bg-blue-600/20 text-blue-400 rounded-lg hover:bg-blue-600/30 transition-colors duration-200"
-                        >
-                          <Eye className="w-4 h-4 mr-1" />
-                          Preview
-                        </button>
-                        <button
-                          onClick={() => setEditingCard(card)}
-                          className="flex-1 inline-flex items-center justify-center px-3 py-2 bg-purple-600/20 text-purple-400 rounded-lg hover:bg-purple-600/30 transition-colors duration-200"
-                        >
-                          <Edit className="w-4 h-4 mr-1" />
-                          Edit
-                        </button>
-                        <button
-                          onClick={() => setDeletingCard(card)}
-                          className="inline-flex items-center justify-center px-3 py-2 bg-red-600/20 text-red-400 rounded-lg hover:bg-red-600/30 transition-colors duration-200"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </button>
-                      </div>
-                    </div>
+            {/* Stats */}
+            <div className="grid grid-cols-1 sm:grid-cols-4 gap-6 mb-8">
+              <div className="bg-white/10 backdrop-blur-md rounded-xl p-6 border border-white/20">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-slate-400 text-sm font-medium">Total Cards</p>
+                    <p className="text-3xl font-bold text-white">{cards.length}</p>
                   </div>
-                ))}
+                  <div className="w-12 h-12 bg-blue-500/20 rounded-lg flex items-center justify-center">
+                    <Building2 className="w-6 h-6 text-blue-400" />
+                  </div>
+                </div>
+              </div>
+              <div className="bg-white/10 backdrop-blur-md rounded-xl p-6 border border-white/20">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-slate-400 text-sm font-medium">Active Today</p>
+                    <p className="text-3xl font-bold text-white">{cards.length}</p>
+                  </div>
+                  <div className="w-12 h-12 bg-green-500/20 rounded-lg flex items-center justify-center">
+                    <Eye className="w-6 h-6 text-green-400" />
+                  </div>
+                </div>
+              </div>
+              <div className="bg-white/10 backdrop-blur-md rounded-xl p-6 border border-white/20">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-slate-400 text-sm font-medium">This Month</p>
+                    <p className="text-3xl font-bold text-white">
+                      {cards.filter(card => {
+                        const d = new Date(card.createdAt);
+                        const now = new Date();
+                        return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
+                      }).length}
+                    </p>
+                  </div>
+                  <div className="w-12 h-12 bg-purple-500/20 rounded-lg flex items-center justify-center">
+                    <Calendar className="w-6 h-6 text-purple-400" />
+                  </div>
+                </div>
+              </div>
+              <div className="bg-white/10 backdrop-blur-md rounded-xl p-6 border border-white/20">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-slate-400 text-sm font-medium">Total Views</p>
+                    <p className="text-3xl font-bold text-white">{totalViews}</p>
+                  </div>
+                  <div className="w-12 h-12 bg-amber-500/20 rounded-lg flex items-center justify-center">
+                    <BarChart3 className="w-6 h-6 text-amber-400" />
+                  </div>
+                </div>
               </div>
             </div>
 
-            {/* QR Codes Grid */}
-            <div>
-              <h2 className="text-2xl font-bold text-white mb-6 flex items-center">
-                
-                  <QrCode className="w-6 h-6 mr-2 text-white" />
-                
-                QR Codes ({filteredCards.length})
-              </h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                {filteredCards.map((card) => (
-                  <QRCodeCard key={`qr-${card.id}`} card={card} />
-                ))}
+            {/* Loading State */}
+            {isLoading ? (
+              <div className="text-center py-16">
+                <div className="w-16 h-16 bg-blue-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
+                  <Loader2 className="w-8 h-8 text-blue-400 animate-spin" />
+                </div>
+                <h3 className="text-2xl font-semibold text-white mb-2">Loading Cards</h3>
+                <p className="text-slate-400">
+                  {connectionStatus === 'connected' 
+                    ? 'Fetching your review cards from cloud storage...' 
+                    : 'Loading your review cards from local storage...'
+                  }
+                </p>
               </div>
-            </div>
+            ) : filteredCards.length === 0 ? (
+              <div className="text-center py-16">
+                <div className="w-24 h-24 bg-slate-700/50 rounded-full flex items-center justify-center mx-auto mb-6">
+                  <Building2 className="w-12 h-12 text-slate-400" />
+                </div>
+                <h3 className="text-2xl font-semibold text-white mb-2">
+                  {searchTerm ? 'No cards found' : 'No review cards yet'}
+                </h3>
+                <p className="text-slate-400 mb-8 max-w-md mx-auto">
+                  {searchTerm 
+                    ? 'Try adjusting your search terms or create a new card.'
+                    : 'Get started by creating your first review card for your business.'
+                  }
+                </p>
+                {!searchTerm && (
+                  <button
+                    onClick={() => setShowAddModal(true)}
+                    className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold rounded-xl hover:from-blue-700 hover:to-purple-700 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105"
+                  >
+                    <Plus className="w-5 h-5 mr-2" />
+                    Create Your First Card
+                  </button>
+                )}
+              </div>
+            ) : (
+              <div className="space-y-8">
+                {/* Review Cards Grid */}
+                <div>
+                  <h2 className="text-2xl font-bold text-white mb-6 flex items-center">
+                    <Building2 className="w-6 h-6 mr-3" />
+                    Review Cards ({filteredCards.length})
+                  </h2>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {filteredCards.map((card) => {
+                      const views = card.viewCount ?? 0;
+                      const share = totalViews ? (views / totalViews) * 100 : 0;
+                      return (
+                        <div
+                          key={card.id}
+                          className="group relative bg-white/10 backdrop-blur-md rounded-xl border border-white/20 overflow-hidden hover:border-blue-400/50 hover:bg-white/15 transition-all duration-300"
+                        >
+                          {/* Top Section */}
+                          <div className="p-5 pb-2 flex items-start gap-4">
+                            <div className="w-14 h-14 rounded-lg bg-white flex items-center justify-center shadow-lg ring-1 ring-slate-200 overflow-hidden">
+                              {card.logoUrl ? (
+                                <img
+                                  src={card.logoUrl}
+                                  alt={`${card.businessName} logo`}
+                                  className="w-10 h-10 object-contain"
+                                  loading="lazy"
+                                />
+                              ) : (
+                                <Building2 className="w-7 h-7 text-slate-500" />
+                              )}
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <h3 className="text-xl font-semibold text-white truncate group-hover:text-blue-200 transition-colors">
+                                {card.businessName}
+                              </h3>
+                              <p className="text-[16px] text-slate-400 truncate">
+                                /{card.slug}
+                              </p>
+                            </div>
+                            
+                          </div>
+                          <div className="mt-0 mb-2 mx-5 flex flex-wrap gap-1.5">
+                                <span className="px-2 py-0.5 text-[13px] rounded-md bg-blue-500/20 text-blue-300">
+                                  {card.category || '—'}
+                                </span>
+                                <span className="px-2 py-0.5 text-[13px] rounded-md bg-purple-500/20 text-purple-300">
+                                  {card.type || '—'}
+                                </span>
+                                <span className="px-2 py-0.5 text-[13px] rounded-md bg-slate-500/20 text-slate-300">
+                                  {formatDate(card.createdAt)}
+                                </span>
+                              </div>
+
+                          {/* Divider */}
+                          <div className="h-px bg-white/10" />
+
+                          {/* Metrics */}
+                          <div className=" px-5 pt-4 pb-5 space-y-3">
+                            <div>
+                              <div className="flex justify-between text-[16px] uppercase tracking-wide text-slate-100 mb-1">
+                                <span>Total Views : <span className="font-medium text-slate-200">{views}</span></span>
+                                
+                                <span>{share.toFixed(1)}%</span>
+                              </div>
+                              <div className="h-2 rounded-full bg-slate-700 overflow-hidden">
+                                <div
+                                  className="h-full bg-gradient-to-r from-amber-400 via-pink-500 to-fuchsia-500 transition-all duration-500"
+                                  style={{ width: `${share}%` }}
+                                />
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Actions */}
+                          <div className="flex gap-2 px-5 pb-5">
+                            <button
+                              onClick={() => handlePreview(card.slug)}
+                              className="flex-1 inline-flex items-center justify-center px-3 py-2 rounded-lg bg-blue-600/20 text-blue-300 hover:bg-blue-600/30 text-sm transition"
+                            >
+                              <Eye className="w-4 h-4 mr-1" />
+                              Preview
+                            </button>
+                            <button
+                              onClick={() => setEditingCard(card)}
+                              className="flex-1 inline-flex items-center justify-center px-3 py-2 rounded-lg bg-purple-600/20 text-purple-300 hover:bg-purple-600/30 text-sm transition"
+                            >
+                              <Edit className="w-4 h-4 mr-1" />
+                              Edit
+                            </button>
+                            <button
+                              onClick={() => setDeletingCard(card)}
+                              className="inline-flex items-center justify-center px-3 py-2 rounded-lg bg-red-600/20 text-red-300 hover:bg-red-600/30 text-sm transition"
+                              title="Delete"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                          </div>
+
+                          {/* Subtle glow */}
+                          <div className="pointer-events-none absolute inset-0 opacity-0 group-hover:opacity-100 transition duration-500">
+                            <div className="absolute inset-0 rounded-xl ring-1 ring-blue-400/30" />
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* QR Codes Grid */}
+                <div>
+                  <h2 className="text-2xl font-bold text-white mb-6 flex items-center">
+                    
+                    <QrCode className="w-6 h-6 mr-2 text-white" />
+                  
+                    QR Codes ({filteredCards.length})
+                  </h2>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                    {filteredCards.map((card) => (
+                      <QRCodeCard key={`qr-${card.id}`} card={card} />
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
+          </>
+        ) : (
+          <div className="mt-1">
+            <AnalyticsDashboard variant="embedded" />
           </div>
         )}
 
         {/* Modals */}
-        {showAddModal && (
+        {activeView === 'cards' && showAddModal && (
           <CompactAddCardModal
             onClose={() => setShowAddModal(false)}
             onSave={handleAddCard}
           />
         )}
 
-        {editingCard && (
+        {activeView === 'cards' && editingCard && (
           <EditCardModal
             card={editingCard}
             onClose={() => setEditingCard(null)}
@@ -450,7 +532,7 @@ export const AdminDashboard: React.FC = () => {
           />
         )}
 
-        {deletingCard && (
+        {activeView === 'cards' && deletingCard && (
           <ConfirmDialog
             title="Delete Review Card"
             message={`Are you sure you want to delete the review card for "${deletingCard.businessName}"? This action cannot be undone.`}
