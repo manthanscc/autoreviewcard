@@ -1,5 +1,13 @@
-import React, { useState, useEffect } from 'react';
-import { Star, Sparkles, CheckCircle, QrCode, ArrowLeft, ArrowRight } from 'lucide-react';
+import React, { useState, useEffect } from "react";
+import {
+  Star,
+  Sparkles,
+  CheckCircle,
+  QrCode,
+  ArrowLeft,
+  ArrowRight,
+  Languages,
+} from "lucide-react";
 
 const businessCards = [
   {
@@ -10,7 +18,7 @@ const businessCards = [
     colorFrom: "from-indigo-900",
     colorTo: "to-purple-900",
     services: ["Website", "Application", "iOS", "Developer", "Environment"],
-    image: "/SCC-INFOTECH-LLP-review-qr-card.png",
+    image: "/cards/SCC-INFOTECH-LLP-review-card.png",
   },
   {
     name: "Raaji na Red",
@@ -20,7 +28,7 @@ const businessCards = [
     colorFrom: "from-rose-900",
     colorTo: "to-orange-900",
     services: ["Taste", "Quality", "Packaging", "Service", "Delivery"],
-    image: "/Raaji-na-Red-review-qr-card.png",
+    image: "/cards/Raaji-na-Red-review-card.png",
   },
   {
     name: "Jay Khodiyar Selection",
@@ -30,7 +38,7 @@ const businessCards = [
     colorFrom: "from-fuchsia-900",
     colorTo: "to-violet-900",
     services: ["Fabric", "Design", "Fitting", "Pricing", "Support"],
-    image: "/Jay-Khodiyar-Selection-review-qr-card (1).png",
+    image: "/cards/Jay-Khodiyar-Selection-review-card.png",
   },
   {
     name: "Stickwell Papers Pvt.Ltd",
@@ -40,7 +48,7 @@ const businessCards = [
     colorFrom: "from-sky-900",
     colorTo: "to-blue-900",
     services: ["Quality", "Service", "Logistics", "Pricing", "Reliability"],
-    image: "/Stickwell-Papers-Pvt-Ltd-review-qr-card.png",
+    image: "/cards/Stickwell-Papers-Pvt-Ltd-review-card.png",
   },
 ];
 
@@ -62,23 +70,62 @@ export const Reviewcards: React.FC = () => {
   };
 
   const generateReview = () => {
-    const adjectives: Record<number, string> = {
-      5: "outstanding, seamless and truly impressive",
-      4: "very good and reliable",
-      3: "good overall with room for improvement",
-      2: "below expectations this time",
-      1: "disappointing",
-    };
-
     const picked = selectedServices.slice(0, 3).join(", ") || "service";
-    const base = `Our experience with ${biz.name} was ${adjectives[rating]}. Their ${picked} really stood out. The team in ${biz.location} made the whole process easy and professional.`;
-    const tail =
-      rating >= 4
-        ? " Highly recommend them to anyone looking for quality and trust."
-        : rating === 3
-        ? " We believe future enhancements will make it even better."
-        : " Hoping they address these issues soon.";
-    setReviewText(`"${base}${tail}"`);
+
+    if (selectedLanguage === "Gujarati") {
+      const adjectivesGuj: Record<number, string> = {
+        5: "ઉત્કૃષ્ટ, સરળ અને ખરેખર પ્રભાવશાળી",
+        4: "ખૂબ જ સારી અને વિશ્વસનીય",
+        3: "એકંદરે સારી છે પરંતુ સુધારણાની જરૂર છે",
+        2: "આ વખતે અપેક્ષા કરતાં ઓછું",
+        1: "નિરાશાજનક",
+      };
+
+      const base = `${biz.name} સાથેનો અમારો અનુભવ ${adjectivesGuj[rating]} હતો. તેમની ${picked} ખરેખર અલગ હતી. ${biz.location} માં ટીમે સમગ્ર પ્રક્રિયાને સરળ અને વ્યાવસાયિક બનાવી.`;
+      const tail =
+        rating >= 4
+          ? " ગુણવત્તા અને વિશ્વાસની શોધમાં કોઈપણને ખૂબ ભલામણ કરું છું."
+          : rating === 3
+          ? " અમે માનીએ છીએ કે ભવિષ્યમાં સુધારાઓ તેને વધુ સારું બનાવશે."
+          : " આશા રાખું છું કે તેઓ ટૂંક સમયમાં આ મુદ્દાઓનું નિરાકરણ કરશે.";
+      setReviewText(`"${base}${tail}"`);
+    } else if (selectedLanguage === "Hindi") {
+      const adjectivesHin: Record<number, string> = {
+        5: "उत्कृष्ट, निर्बाध और वास्तव में प्रभावशाली",
+        4: "बहुत अच्छा और विश्वसनीय",
+        3: "कुल मिलाकर अच्छा लेकिन सुधार की गुंजाइश है",
+        2: "इस बार उम्मीद से कम",
+        1: "निराशाजनक",
+      };
+
+      const base = `${biz.name} के साथ हमारा अनुभव ${adjectivesHin[rating]} था। उनकी ${picked} वास्तव में उत्कृष्ट थी। ${biz.location} में टीम ने पूरी प्रक्रिया को आसान और पेशेवर बना दिया।`;
+      const tail =
+        rating >= 4
+          ? " गुणवत्ता और विश्वास की तलाश करने वाले किसी भी व्यक्ति को अत्यधिक अनुशंसा करते हैं।"
+          : rating === 3
+          ? " हम मानते हैं कि भविष्य में सुधार इसे और बेहतर बना देंगे।"
+          : " आशा है कि वे जल्द ही इन मुद्दों का समाधान करेंगे।";
+      setReviewText(`"${base}${tail}"`);
+    } else {
+      // English
+      const adjectives: Record<number, string> = {
+        5: "outstanding, seamless and truly impressive",
+        4: "very good and reliable",
+        3: "good overall with room for improvement",
+        2: "below expectations this time",
+        1: "disappointing",
+      };
+
+      const base = `Our experience with ${biz.name} was ${adjectives[rating]}. Their ${picked} really stood out. The team in ${biz.location} made the whole process easy and professional.`;
+      const tail =
+        rating >= 4
+          ? " Highly recommend them to anyone looking for quality and trust."
+          : rating === 3
+          ? " We believe future enhancements will make it even better."
+          : " Hoping they address these issues soon.";
+      setReviewText(`"${base}${tail}"`);
+    }
+
     setCopied(false);
   };
 
@@ -106,7 +153,7 @@ export const Reviewcards: React.FC = () => {
       {/* Decorative background elements */}
       <div className="pointer-events-none absolute -top-20 -left-20 w-64 h-64 bg-purple-300/20 rounded-full blur-3xl"></div>
       <div className="pointer-events-none absolute -bottom-32 -right-32 w-96 h-96 bg-blue-300/20 rounded-full blur-3xl"></div>
-      
+
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
         <div className="text-center mb-16 animate-fade-in-up">
           <div className="inline-flex items-center gap-2 bg-purple-200 text-purple-600 rounded-full px-4 py-2 mb-4 animate-fade-in-up">
@@ -124,29 +171,30 @@ export const Reviewcards: React.FC = () => {
         {/* Main Card */}
         <div className="mb-6">
           <div className="relative rounded-3xl p-[2px] bg-gradient-to-r from-blue-500 via-purple-500 to-indigo-600 shadow-[0_12px_60px_-18px_rgba(59,130,246,0.35)]">
-            <div className="grid lg:grid-cols-2 rounded-[inherit] bg-white/90 backdrop-blur-xl overflow-hidden">
-
+            <div className="grid lg:grid-cols-[minmax(300px,420px)_1fr] rounded-[inherit] bg-white/90 backdrop-blur-xl overflow-hidden">
               {/* LEFT PANEL – Animated Business Cards */}
               <div
                 key={bizIndex}
                 className="relative p-10 flex flex-col gap-6 transition-all duration-500"
               >
                 <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-blue-500/60 via-purple-500/60 to-indigo-600/60" />
-                
+
                 <h3 className="text-xl font-bold text-slate-900 mb-2 flex items-center gap-2">
                   <span className="relative">
                     Business Review Cards
                     <span className="absolute -bottom-1 left-0 w-full h-[3px] bg-gradient-to-r from-blue-500 via-purple-500 to-indigo-600 rounded-full"></span>
                   </span>
                 </h3>
-                <p className="text-gray-600 mb-6">Real business cards with QR codes for reviews</p>
+                <p className="text-gray-600 mb-0">
+                  Real business cards with QR codes for reviews
+                </p>
 
                 {/* Business Card Display */}
                 <div className="flex-1 flex items-center justify-center animate-fade-in-up animation-delay-300">
-                  <div className="group relative max-w-[238px] lg:h-[350px] h-[280px] rounded-3xl overflow-hidden shadow-2xl bg-transparent flex items-center justify-center transform transition-all duration-700 ease-out hover:scale-105 motion-reduce:transform-none">
+                  <div className="group relative max-w-[258px] lg:h-[380px] h-[280px] rounded-3xl overflow-hidden shadow-2xl bg-transparent flex items-center justify-center transform transition-all duration-700 ease-out hover:scale-105 motion-reduce:transform-none">
                     <div className="pointer-events-none absolute -top-6 -left-6 w-40 h-40 bg-gradient-to-br from-blue-200/30 to-purple-200/20 rounded-full blur-3xl animate-float opacity-70" />
-                    <img 
-                      src={biz.image} 
+                    <img
+                      src={biz.image}
                       alt={`${biz.name} review card`}
                       className="w-full h-full object-contain transition-transform duration-700 ease-out group-hover:scale-105 group-hover:-translate-y-2 will-change-transform motion-reduce:transform-none"
                     />
@@ -161,21 +209,32 @@ export const Reviewcards: React.FC = () => {
                       <button
                         key={i}
                         onClick={() => setBizIndex(i)}
-                        className={`h-2.5 rounded-full transition-all ${i === bizIndex ? 'w-8 bg-gradient-to-r from-blue-500 to-purple-500 shadow' : 'w-2.5 bg-slate-300 hover:bg-slate-400'}`}
+                        className={`h-2.5 rounded-full transition-all ${
+                          i === bizIndex
+                            ? "w-8 bg-gradient-to-r from-blue-500 to-purple-500 shadow"
+                            : "w-2.5 bg-slate-300 hover:bg-slate-400"
+                        }`}
                         aria-label={`Show business ${i + 1}`}
                       />
                     ))}
                   </div>
                   <div className="flex gap-3">
                     <button
-                      onClick={() => setBizIndex((bizIndex - 1 + businessCards.length) % businessCards.length)}
+                      onClick={() =>
+                        setBizIndex(
+                          (bizIndex - 1 + businessCards.length) %
+                            businessCards.length
+                        )
+                      }
                       aria-label="Previous business"
                       className="group w-10 h-10 rounded-xl border border-slate-200 bg-white hover:border-blue-300 hover:shadow-md flex items-center justify-center transition-all"
                     >
                       <ArrowLeft className="w-4 h-4 text-slate-600 group-hover:text-blue-600" />
                     </button>
                     <button
-                      onClick={() => setBizIndex((bizIndex + 1) % businessCards.length)}
+                      onClick={() =>
+                        setBizIndex((bizIndex + 1) % businessCards.length)
+                      }
                       aria-label="Next business"
                       className="group w-10 h-10 rounded-xl border border-slate-200 bg-white hover:border-blue-300 hover:shadow-md flex items-center justify-center transition-all"
                     >
@@ -186,52 +245,71 @@ export const Reviewcards: React.FC = () => {
               </div>
 
               {/* RIGHT PANEL – Review Generator */}
-              <div className="relative p-10 bg-gradient-to-br from-blue-50 via-purple-50 to-indigo-50 flex flex-col">
+              <div className=" relative p-10 bg-gradient-to-br from-blue-50 via-purple-50 to-indigo-50 flex flex-col">
                 <div className="pointer-events-none absolute -top-10 -right-10 w-40 h-40 bg-blue-300/30 rounded-full blur-2xl" />
-                
+
                 <h3 className="text-xl font-bold text-slate-900 mb-6 flex items-center gap-2">
-                  <Sparkles className="w-5 h-5 text-blue-600" />
+                  {/* <Sparkles className="w-5 h-5 text-blue-600" /> */}
                   AI Review Generator
                 </h3>
 
-                {/* Rating Selector */}
-                <div className="mb-6">
-                  <div className="text-xs font-semibold uppercase text-slate-500 mb-2">Select Rating</div>
-                  <div className="flex gap-2">
-                    {[1,2,3,4,5].map(r => (
-                      <button
-                        key={r}
-                        onClick={() => { setRating(r); generateReview(); }}
-                        className={`p-2 rounded-xl border transition ${
-                          r <= rating
-                            ? 'bg-yellow-400/90 border-yellow-500 text-slate-800'
-                            : 'bg-white border-slate-200 hover:border-slate-300'
-                        }`}
-                        aria-label={`Set rating ${r}`}
-                      >
-                        <Star className={`w-5 h-5 ${r <= rating ? 'fill-yellow-500 text-yellow-500' : 'text-slate-400'}`} />
-                      </button>
-                    ))}
+                {/* Rating + Language Row */}
+                <div className="mb-6 flex flex-col md:flex-row md:items-start md:justify-between gap-6">
+                  {/* Rating Selector (Left) */}
+                  <div>
+                    <div className="text-xs font-semibold uppercase text-slate-500 mb-2">
+                      Select Rating
+                    </div>
+                    <div className="flex gap-2">
+                      {[1, 2, 3, 4, 5].map((r) => (
+                        <button
+                          key={r}
+                          onClick={() => {
+                            setRating(r);
+                            generateReview();
+                          }}
+                          className={`p-2 rounded-xl border transition ${
+                            r <= rating
+                              ? "bg-yellow-400/90 border-yellow-500 text-slate-800"
+                              : "bg-white border-slate-200 hover:border-slate-300"
+                          }`}
+                          aria-label={`Set rating ${r}`}
+                        >
+                          <Star
+                            className={`w-5 h-5 ${
+                              r <= rating
+                                ? "fill-yellow-500 text-yellow-500"
+                                : "text-slate-400"
+                            }`}
+                          />
+                        </button>
+                      ))}
+                    </div>
                   </div>
-                </div>
 
-                {/* Language Selector */}
-                <div className="mb-6">
-                  <div className="text-xs font-semibold uppercase text-slate-500 mb-2">Language</div>
-                  <div className="flex flex-wrap gap-2">
-                    {languages.map(l => (
-                      <button
-                        key={l}
-                        onClick={() => setSelectedLanguage(l)}
-                        className={`px-4 py-1.5 rounded-full text-sm font-medium border transition ${
-                          selectedLanguage === l
-                            ? 'bg-blue-600 text-white border-blue-600'
-                            : 'bg-white text-slate-600 border-slate-200 hover:border-slate-300'
-                        }`}
-                      >
-                        {l}
-                      </button>
-                    ))}
+                  {/* Language Selector (Right) */}
+                  <div className="md:text-right">
+                    <div className="flex items-center gap-2 mb-2">
+                      <Languages className="w-4 h-4 text-orange-600" />
+                      <div className="text-xs font-semibold uppercase text-slate-500">
+                        Language
+                      </div>
+                    </div>
+                    <div className="flex flex-wrap gap-2 md:justify-end">
+                      {languages.map((l) => (
+                        <button
+                          key={l}
+                          onClick={() => setSelectedLanguage(l)}
+                          className={`px-4 py-1.5 rounded-full text-sm font-medium border transition ${
+                            selectedLanguage === l
+                              ? "bg-blue-600 text-white border-blue-600"
+                              : "bg-white text-slate-600 border-slate-200 hover:border-slate-300"
+                          }`}
+                        >
+                          {l}
+                        </button>
+                      ))}
+                    </div>
                   </div>
                 </div>
 
@@ -239,19 +317,23 @@ export const Reviewcards: React.FC = () => {
                 <div className="mb-6">
                   <div className="flex items-center gap-2 mb-2">
                     <Sparkles className="w-4 h-4 text-blue-600" />
-                    <div className="text-xs font-semibold uppercase text-slate-500">Select Services to Highlight</div>
+                    <div className="text-xs font-semibold uppercase text-slate-500">
+                      Select Services to Highlight
+                    </div>
                   </div>
                   <div className="flex flex-wrap gap-2">
-                    {biz.services.map(s => {
+                    {biz.services.map((s) => {
                       const active = selectedServices.includes(s);
                       return (
                         <button
                           key={s}
-                          onClick={() => { toggleService(s); }}
+                          onClick={() => {
+                            toggleService(s);
+                          }}
                           className={`px-3 py-1.5 rounded-full text-xs font-semibold transition border ${
                             active
-                              ? 'bg-purple-600 text-white border-purple-600'
-                              : 'bg-white text-slate-600 border-slate-200 hover:border-slate-300'
+                              ? "bg-purple-600 text-white border-purple-600"
+                              : "bg-white text-slate-600 border-slate-200 hover:border-slate-300"
                           }`}
                         >
                           {s}
@@ -264,8 +346,12 @@ export const Reviewcards: React.FC = () => {
                 {/* Review Text */}
                 <div className="mb-6">
                   <div className="flex items-center justify-between mb-2">
-                    <span className="text-xs font-semibold uppercase text-slate-500">Generated Review</span>
-                    <span className="text-[10px] text-slate-400">{reviewText.length} chars</span>
+                    <span className="text-xs font-semibold uppercase text-slate-500">
+                      Generated Review
+                    </span>
+                    <span className="text-[10px] text-slate-400">
+                      {reviewText.length} chars
+                    </span>
                   </div>
                   <div className="rounded-2xl bg-white/90 border border-slate-200 p-4 text-slate-700 text-sm leading-relaxed min-h-[120px] whitespace-pre-line">
                     {reviewText}
@@ -299,16 +385,15 @@ export const Reviewcards: React.FC = () => {
                   </button>
                 </div>
 
-                <div className="mt-4 text-[10px] text-slate-400 flex items-center gap-2">
+                <div className="mt-4 text-[13px] text-slate-400 flex items-center gap-2">
                   <Sparkles className="w-3 h-3 text-blue-500" />
-                  AI generates contextual reviews based on rating & selected services.
+                  AI generates contextual reviews based on rating & selected
+                  services.
                 </div>
               </div>
-
             </div>
           </div>
         </div>
-
       </div>
     </section>
   );

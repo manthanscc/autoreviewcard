@@ -1,5 +1,6 @@
 import React from 'react';
 import { QrCode, Facebook, Twitter, Instagram, Linkedin, Send } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 export const Footer: React.FC = () => {
   return (
@@ -18,18 +19,6 @@ export const Footer: React.FC = () => {
               Helping businesses get more 5-star Google reviews with
               AI-powered QR codes. Trusted by 2,500+ businesses worldwide.
             </p>
-            <div className="flex gap-4">
-              {[Facebook, Twitter, Instagram, Linkedin].map((Icon, index) => (
-                <a
-                  key={index}
-                  href="#"
-                  className="w-10 h-10 bg-slate-800 hover:bg-gradient-to-br hover:from-blue-500 hover:to-purple-600 rounded-lg flex items-center justify-center transition-all duration-300 transform hover:scale-110 hover:shadow-lg"
-                  aria-label={`Social media ${index + 1}`}
-                >
-                  <Icon className="w-5 h-5" />
-                </a>
-              ))}
-            </div>
           </div>
 
           <div className="animate-fade-in-up animation-delay-200">
@@ -75,23 +64,18 @@ export const Footer: React.FC = () => {
           </div>
 
           <div className="animate-fade-in-up animation-delay-400">
-            <h4 className="font-bold text-lg mb-6">Newsletter</h4>
-            <p className="text-slate-400 mb-6">
-              Get tips on building your online reputation and growing your
-              business.
-            </p>
-            <div className="flex gap-2">
-              <input
-                type="email"
-                placeholder="your@email.com"
-                className="flex-1 px-4 py-3 bg-slate-800 border border-slate-700 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300 hover:border-slate-600 text-white placeholder-slate-400 outline-none"
-              />
-              <button
-                className="px-4 py-3 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 rounded-xl transition-all duration-300 transform hover:scale-105 hover:shadow-lg"
-                aria-label="Subscribe"
-              >
-                <Send className="w-5 h-5" />
-              </button>
+            <h4 className="font-bold text-lg mb-6">Social Media</h4>
+            <div className="flex gap-4">
+              {[Facebook, Twitter, Instagram, Linkedin].map((Icon, index) => (
+                <a
+                  key={index}
+                  href="#"
+                  className="w-10 h-10 bg-slate-800 border border-slate-700 hover:bg-gradient-to-br hover:from-blue-500 hover:to-purple-600 rounded-lg flex items-center justify-center transition-all duration-300 transform hover:scale-110 hover:shadow-lg"
+                  aria-label={`Social media ${index + 1}`}
+                >
+                  <Icon className="w-5 h-5" />
+                </a>
+              ))}
             </div>
           </div>
         </div>
@@ -102,17 +86,24 @@ export const Footer: React.FC = () => {
             businesses worldwide.
           </p>
           <div className="flex gap-8 text-slate-400">
-            {["Privacy Policy", "Terms of Service", "Cookie Policy"].map(
-              (link, index) => (
-                <a
-                  key={index}
-                  href="#"
-                  className="hover:text-white transition-colors duration-300"
-                >
-                  {link}
-                </a>
-              )
-            )}
+            <Link
+              to="/privacy-policy"
+              className="hover:text-white transition-colors duration-300"
+            >
+              Privacy Policy
+            </Link>
+            <Link
+              to="/terms-of-service"
+              className="hover:text-white transition-colors duration-300"
+            >
+              Terms of Service
+            </Link>
+            <Link
+              to="/cookie-policy"
+              className="hover:text-white transition-colors duration-300"
+            >
+              Cookie Policy
+            </Link>
           </div>
         </div>
       </div>

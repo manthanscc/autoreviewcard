@@ -35,13 +35,14 @@ function App() {
       <WhatsAppButton phoneNumber="9426479677" />
 
       <Heropage isVisible={isVisible} scrollToContact={scrollToContact} />
+      <Features />
 
-      <Problem />
+      
+      <Reviewcards />
       <Solution />
       <Industries />
-      <Reviewcards />
-      <Features />
-      <Pricing />
+      <Problem />
+      {/* <Pricing /> */}
       <Testimonials />
       <CustomerSuccess />
       <FAQSection />

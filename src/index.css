@@ -78,6 +78,15 @@
   50% { transform: scale(1.05); }
 }
 
+@keyframes shimmer {
+  0%, 100% {
+    transform: translateX(-100%);
+  }
+  50% {
+    transform: translateX(100%);
+  }
+}
+
 /* Animation Classes */
 .animate-spin-continuous {
   animation: spin-continuous 4s linear infinite;

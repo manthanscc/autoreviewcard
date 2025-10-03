@@ -1,19 +1,26 @@
-import React, { useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import ReactGA from 'react-ga4';
-import { AdminDashboard } from './components/AdminDashboard';
-import { CompactReviewCardView } from './components/CompactReviewCardView';
-import { LoginPage } from './components/LoginPage';
-import { ProtectedRoute } from './components/ProtectedRoute';
-import { storage } from './utils/storage';
-import { auth } from './utils/auth';
-import Homepage from './components/Home page/Homepage'; // <-- import Homepage
+import React, { useEffect } from "react";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
+import ReactGA from "react-ga4";
+import { AdminDashboard } from "./components/AdminDashboard";
+import { CompactReviewCardView } from "./components/CompactReviewCardView";
+import { LoginPage } from "./components/LoginPage";
+import { ProtectedRoute } from "./components/ProtectedRoute";
+import { storage } from "./utils/storage";
+import { auth } from "./utils/auth";
+import Homepage from "./components/Home page/Homepage";
+import PrivacyPolicy from "./components/Policies/PrivacyPolicy";
+import TermsOfService from "./components/Policies/TermsOfService";
+import CookiePolicy from "./components/Policies/CookiePolicy";
 
 ReactGA.initialize("G-YE1SGYY8P4"); // your measurement ID
 ReactGA.send("pageview");
 
 function App() {
-
   useEffect(() => {
     ReactGA.send({ hitType: "pageview", page: window.location.pathname });
   }, []);
@@ -23,28 +30,25 @@ function App() {
       <Routes>
         {/* Login Route */}
         <Route path="/login" element={<LoginPage />} />
-        
+
         {/* Admin Dashboard Route */}
-        <Route 
-          path="/admin" 
+        <Route
+          path="/admin"
           element={
             <ProtectedRoute>
               <AdminDashboard />
             </ProtectedRoute>
-          } 
+          }
         />
-        
+
         {/* Home page route */}
-        <Route 
-          path="/" 
-          element={<Homepage />} 
-        />
-        
+        <Route path="/" element={<Homepage />} />
+        <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+        <Route path="/terms-of-service" element={<TermsOfService />} />
+        <Route path="/cookie-policy" element={<CookiePolicy />} />
+
         {/* Dynamic Review Card Routes */}
-        <Route 
-          path="/:slug" 
-          element={<DynamicReviewCard />} 
-        />
+        <Route path="/:slug" element={<DynamicReviewCard />} />
       </Routes>
     </Router>
   );
@@ -62,7 +66,7 @@ const DynamicReviewCard: React.FC = () => {
         const foundCard = await storage.getCardBySlug(slug);
         setCard(foundCard);
       } catch (error) {
-        console.error('Error loading card:', error);
+        console.error("Error loading card:", error);
         setCard(null);
       } finally {
         setLoading(false);
@@ -79,7 +83,9 @@ const DynamicReviewCard: React.FC = () => {
           <div className="w-16 h-16 bg-blue-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
             <div className="w-8 h-8 border-2 border-blue-400 border-t-transparent rounded-full animate-spin"></div>
           </div>
-          <h1 className="text-2xl font-bold text-white mb-4">Loading Review Card</h1>
+          <h1 className="text-2xl font-bold text-white mb-4">
+            Loading Review Card
+          </h1>
           <p className="text-slate-400">Please wait...</p>
         </div>
       </div>
