@@ -1,191 +1,247 @@
-import { Mail, MapPin, MessageCircle, Phone } from 'lucide-react';
-import React, { useState } from 'react';
+import React from "react";
+import { useNavigate } from "react-router-dom";
+import {
+  MessageCircle,
+  Sparkles,
+  Star,
+  Zap,
+  ArrowRight,
+  CheckCircle,
+  Clock,
+  Shield,
+} from "lucide-react";
 
-interface FormState {
-  name: string;
-  email: string;
-  message: string;
-}
-
-const initial: FormState = { name: '', email: '', message: '' };
+const features = [
+  {
+    icon: CheckCircle,
+    title: "Quick Setup",
+    desc: "Get started in under 5 minutes",
+  },
+  {
+    icon: Clock,
+    title: "Save Time",
+    desc: "Automate review collection",
+  },
+  {
+    icon: Star,
+    title: "More Reviews",
+    desc: "Increase reviews by 10x",
+  },
+  {
+    icon: Shield,
+    title: "Fully Secure",
+    desc: "Enterprise-level security",
+  },
+];
 
 export const ContactForm: React.FC = () => {
-  const [form, setForm] = useState<FormState>(initial);
-  const [submitting, setSubmitting] = useState(false);
-  const [sent, setSent] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const navigate = useNavigate();
 
-  const onChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    setForm(f => ({ ...f, [e.target.name]: e.target.value }));
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError(null);
-    if (!form.name.trim() || !form.email.trim() || !form.message.trim()) {
-      setError('Please fill all fields.');
-      return;
-    }
-    setSubmitting(true);
-    try {
-      // Replace with real API call
-      await new Promise(r => setTimeout(r, 900));
-      setSent(true);
-      setForm(initial);
-    } catch (e) {
-      setError('Something went wrong. Try again.');
-    } finally {
-      setSubmitting(false);
-    }
+  const handleStartNow = () => {
+    navigate("/contact-form");
   };
 
   return (
-    <section id="contact" tabIndex={-1} className="py-24 px-4 bg-gradient-to-br from-slate-900 to-purple-900 text-white relative overflow-hidden scroll-mt-24">
-        {/* Decorative background elements */}
-        <div className="pointer-events-none absolute -top-20 -left-20 w-64 h-64 bg-blue-600/10 rounded-full blur-3xl"></div>
-        <div className="pointer-events-none absolute -bottom-32 -right-32 w-96 h-96 bg-purple-600/10 rounded-full blur-3xl"></div>
-        
-        <div className="max-w-6xl mx-auto relative">
-          <div className="text-center mb-20">
-            <div className="inline-flex items-center gap-2 bg-green-500/20 text-green-400 border border-green-500/30 rounded-full px-4 py-2 mb-6 animate-fade-in-up backdrop-blur-sm">
-              <MessageCircle className="w-4 h-4" />
-              <span className="text-sm font-medium">Contact</span>
-            </div>
-            <h2 className="text-4xl md:text-5xl font-bold text-white mb-6 animate-fade-in-up animation-delay-200">
-              Ready to Get More <span className="bg-gradient-to-r from-green-400 to-emerald-400 bg-clip-text text-transparent">Reviews?</span>
-            </h2>
-            <p className="text-xl text-slate-300 animate-fade-in-up animation-delay-400">
-              Contact us on WhatsApp or Live Chat to get started today.
-            </p>
+    <section
+      id="contact"
+      className="py-16 px-4 bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 text-white relative overflow-hidden"
+    >
+      {/* Background Design */}
+      <div className="pointer-events-none absolute inset-0 overflow-hidden">
+        <div className="absolute -top-24 -left-24 w-80 h-80 bg-blue-600/15 rounded-full blur-3xl animate-pulse"></div>
+        <div
+          className="absolute -bottom-32 -right-32 w-[28rem] h-[28rem] bg-purple-600/15 rounded-full blur-3xl animate-pulse"
+          style={{ animationDelay: "1s" }}
+        ></div>
+        <div
+          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-indigo-600/15 rounded-full blur-3xl animate-pulse"
+          style={{ animationDelay: "2s" }}
+        ></div>
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff10_1px,transparent_1px),linear-gradient(to_bottom,#ffffff10_1px,transparent_1px)] bg-[size:3rem_3rem] opacity-[0.07]"></div>
+        <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-white/30 to-transparent animate-[shimmer_3s_ease-in-out_infinite]"></div>
+        <div className="absolute bottom-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-white/30 to-transparent animate-[shimmer_3s_ease-in-out_infinite]" style={{ animationDelay: "1.5s" }}></div>
+        <Sparkles className="absolute top-12 right-10 w-6 h-6 text-blue-300/40 animate-pulse" />
+        <Sparkles
+          className="absolute bottom-16 left-16 w-5 h-5 text-purple-300/40 animate-pulse"
+          style={{ animationDelay: "1s" }}
+        />
+        <Sparkles
+          className="absolute top-1/3 left-1/4 w-4 h-4 text-pink-300/40 animate-pulse"
+          style={{ animationDelay: "2s" }}
+        />
+      </div>
+
+      <div className="max-w-4xl mx-auto relative">
+        {/* Header */}
+        <div className="text-center mb-10">
+          <div className="inline-flex items-center gap-2 bg-gradient-to-r from-green-500/20 to-emerald-500/20 text-green-400 border border-green-500/30 rounded-full px-6 py-3 mb-8 backdrop-blur-sm shadow-lg relative overflow-hidden group">
+            <div className="absolute inset-0 bg-gradient-to-r from-green-400/0 via-green-400/20 to-green-400/0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
+            <MessageCircle className="w-5 h-5 animate-pulse relative z-10" />
+            <span className="text-sm font-bold relative z-10">Contact Us</span>
+            <Zap className="w-4 h-4 text-yellow-400 relative z-10" />
           </div>
 
-          <div className="grid md:grid-cols-2 gap-12">
-            <div className="animate-slide-in-left animation-delay-300">
-              <form className="space-y-6">
-                <div className="grid md:grid-cols-2 gap-6">
-                  <div>
-                    <label className="block text-sm font-semibold text-slate-300 mb-2">
-                      Name
-                    </label>
-                    <input
-                      type="text"
-                      className="w-full px-4 py-4 bg-slate-800/50 border border-slate-600 text-white placeholder-slate-400 rounded-2xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 hover:border-slate-500 backdrop-blur-sm"
-                      placeholder="Your full name"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-semibold text-slate-300 mb-2">
-                      Email
-                    </label>
-                    <input
-                      type="email"
-                      className="w-full px-4 py-4 bg-slate-800/50 border border-slate-600 text-white placeholder-slate-400 rounded-2xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 hover:border-slate-500 backdrop-blur-sm"
-                      placeholder="your@email.com"
-                    />
-                  </div>
-                </div>
-                <div>
-                  <label className="block text-sm font-semibold text-slate-300 mb-2">
-                    Phone
-                  </label>
-                  <input
-                    type="tel"
-                    className="w-full px-4 py-4 bg-slate-800/50 border border-slate-600 text-white placeholder-slate-400 rounded-2xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 hover:border-slate-500 backdrop-blur-sm"
-                    placeholder="+91 98765 43210"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-semibold text-slate-300 mb-2">
-                    Message
-                  </label>
-                  <textarea
-                    rows={4}
-                    className="w-full px-4 py-4 bg-slate-800/50 border border-slate-600 text-white placeholder-slate-400 rounded-2xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 hover:border-slate-500 backdrop-blur-sm resize-none"
-                    placeholder="Tell us about your business and how we can help..."
-                  ></textarea>
-                </div>
-                <button className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white py-4 rounded-2xl font-semibold transition-all duration-300 transform hover:scale-105 hover:shadow-2xl shadow-lg">
-                  Send Message
-                </button>
-              </form>
-            </div>
+          <h2 className="text-4xl md:text-5xl font-bold text-white mb-6 animate-fade-in-up">
+            Ready to Get More{" "}
+            <span className="relative">
+              <span className="bg-gradient-to-r from-green-400 via-emerald-400 to-teal-400 bg-clip-text text-transparent">
+                5-Star Reviews?
+              </span>
+              <span className="absolute -bottom-2 left-0 w-full h-1 bg-gradient-to-r from-green-400 to-emerald-400 rounded-full"></span>
+            </span>
+          </h2>
 
-            <div className="space-y-8 animate-slide-in-right animation-delay-300">
-              <div>
-                <h3 className="text-2xl font-bold text-white mb-6">
-                  Get in Touch
-                </h3>
-                <div className="space-y-6">
-                  {[
-                    {
-                      icon: Mail,
-                      text: "support@aireviews.com",
-                      color: "text-blue-400",
-                      bgColor: "bg-blue-500/10",
-                      hoverBg: "hover:bg-blue-500/20",
-                    },
-                    {
-                      icon: MessageCircle,
-                      text: "WhatsApp: +91 94264 79677",
-                      color: "text-green-400",
-                      bgColor: "bg-green-500/10",
-                      hoverBg: "hover:bg-green-500/20",
-                    },
-                    {
-                      icon: Phone,
-                      text: "Phone: +91 94264 79677",
-                      color: "text-purple-400",
-                      bgColor: "bg-purple-500/10",
-                      hoverBg: "hover:bg-purple-500/20",
-                    },
-                    {
-                      icon: MapPin,
-                      text: "Office: Surat, Gujarat, India",
-                      color: "text-red-400",
-                      bgColor: "bg-red-500/10",
-                      hoverBg: "hover:bg-red-500/20",
-                    },
-                  ].map((contact, index) => {
-                    const Icon = contact.icon;
-                    return (
-                      <div
-                        key={index}
-                        className={`flex items-center gap-4 p-4 bg-slate-800/30 border border-slate-700/50 ${contact.hoverBg} rounded-2xl hover:shadow-lg hover:shadow-slate-900/20 transition-all duration-300 hover:scale-105 cursor-pointer group backdrop-blur-sm`}
-                      >
-                        <div
-                          className={`w-12 h-12 ${contact.bgColor} rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform`}
-                        >
-                          <Icon className={`w-6 h-6 ${contact.color}`} />
-                        </div>
-                        <span className="text-slate-300 font-medium group-hover:text-white transition-colors">
-                          {contact.text}
-                        </span>
+          <p className="text-xl text-slate-300 max-w-3xl mx-auto animate-fade-in-up animation-delay-200">
+            Join 2,500+ businesses growing with AI-powered review cards.
+          </p>
+        </div>
+
+        {/* Main CTA Card - Centered */}
+        <div className="max-w-3xl mx-auto mb-12 animate-fade-in-up animation-delay-400">
+          <div className="relative bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-xl border border-white/20 rounded-3xl p-10 md:p-12 shadow-2xl overflow-hidden group hover:scale-[1.02] transition-all duration-500">
+            <div className="absolute inset-0 bg-gradient-to-br from-green-500/10 via-emerald-500/10 to-teal-500/10 opacity-50"></div>
+            
+            {/* Shimmer Effect */}
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1500"></div>
+
+            <div className="relative">
+              <div className="flex justify-center mb-6">
+                <div className="w-20 h-20 bg-gradient-to-br from-green-500 to-emerald-500 rounded-2xl flex items-center justify-center shadow-xl group-hover:scale-110 group-hover:rotate-6 transition-all duration-300">
+                  <Star className="w-10 h-10 text-white" />
+                </div>
+              </div>
+
+              <h3 className="text-3xl md:text-4xl font-bold text-white mb-4 text-center">
+                Start Collecting Reviews Today
+              </h3>
+              <p className="text-lg text-slate-300 mb-10 text-center max-w-2xl mx-auto">
+                Fill out a quick form and we'll contact you on WhatsApp within
+                minutes. Get your personalized QR review card instantly.
+              </p>
+
+              {/* Features Grid */}
+              <div className="grid md:grid-cols-2 gap-4 mb-10">
+                {features.map((feature, index) => {
+                  const Icon = feature.icon;
+                  return (
+                    <div
+                      key={index}
+                      className="flex items-start gap-4 p-4 bg-white/5 border border-white/10 rounded-2xl group/feature hover:bg-white/10 transition-all duration-300 hover:scale-105"
+                    >
+                      <div className="w-12 h-12 bg-green-500/10 border border-green-500/30 rounded-xl flex items-center justify-center flex-shrink-0 group-hover/feature:scale-110 group-hover/feature:rotate-12 transition-all duration-300">
+                        <Icon className="w-6 h-6 text-green-400" />
                       </div>
-                    );
-                  })}
-                </div>
+                      <div>
+                        <h4 className="text-white font-bold mb-1">
+                          {feature.title}
+                        </h4>
+                        <p className="text-slate-400 text-sm">
+                          {feature.desc}
+                        </p>
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
 
-              <div className="bg-gradient-to-br from-slate-800/50 to-slate-700/50 border border-slate-600/50 p-8 rounded-3xl hover:shadow-lg hover:shadow-slate-900/20 transition-all duration-300 hover:scale-105 backdrop-blur-sm">
-                <h4 className="text-xl font-bold text-white mb-3">
-                  Quick Start Support
-                </h4>
-                <p className="text-slate-300 mb-6 leading-relaxed">
-                  Get your first QR code and start collecting reviews in under 5
-                  minutes with our dedicated onboarding team.
-                </p>
-                <button 
-                  onClick={() => window.open('https://wa.me/9426479677', '_blank')}
-                  className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white px-8 py-3 rounded-2xl font-semibold transition-all duration-300 flex items-center gap-3 transform hover:scale-105 hover:shadow-xl shadow-lg"
-                >
-                  <MessageCircle className="w-5 h-5" />
-                  WhatsApp Support
-                </button>
-              </div>
+              {/* CTA Button */}
+              <button
+                onClick={handleStartNow}
+                className="group/btn relative w-full bg-gradient-to-r from-green-600 via-emerald-600 to-teal-600 hover:from-green-700 hover:to-teal-700 text-white py-6 rounded-2xl font-bold text-xl transition-all duration-300 transform hover:scale-105 hover:shadow-2xl shadow-xl flex items-center justify-center gap-3 overflow-hidden"
+              >
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover/btn:translate-x-full transition-transform duration-1000"></div>
+                <MessageCircle className="w-7 h-7 relative group-hover/btn:rotate-12 transition-transform" />
+                <span className="relative">Fill the Form & Get Started</span>
+                <ArrowRight className="w-7 h-7 relative group-hover/btn:translate-x-1 transition-transform" />
+              </button>
+
+              <p className="text-sm text-slate-400 text-center mt-5">
+                🔒 We'll contact you on WhatsApp within 5 minutes
+              </p>
             </div>
           </div>
         </div>
-      </section>
+
+        {/* Bottom Section - Stats & WhatsApp */}
+        <div className="grid md:grid-cols-2 gap-6 animate-fade-in-up animation-delay-600">
+          {/* WhatsApp CTA */}
+          <div className="relative bg-gradient-to-br from-green-500/20 to-emerald-500/20 backdrop-blur-xl border border-green-500/30 rounded-3xl p-8 shadow-xl group hover:scale-105 transition-all duration-300 overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-r from-green-500/0 via-green-500/10 to-green-500/0 -translate-x-full group-hover:translate-x-full transition-transform duration-1500"></div>
+            
+            <div className="relative">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-14 h-14 bg-green-500/20 border border-green-500/40 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
+                  <Zap className="w-8 h-8 text-green-400 animate-pulse" />
+                </div>
+                <h4 className="text-2xl font-bold text-white">
+                  Instant Support
+                </h4>
+              </div>
+              <p className="text-slate-300 mb-6 text-lg">
+                Get your QR code in under{" "}
+                <span className="text-green-400 font-bold">5 minutes</span>!
+              </p>
+              <button
+                onClick={() =>
+                  window.open("https://wa.me/9426479677", "_blank")
+                }
+                className="w-full bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white px-6 py-4 rounded-xl font-bold text-lg transition-all duration-300 flex items-center justify-center gap-3 hover:scale-105 shadow-lg"
+              >
+                <MessageCircle className="w-6 h-6" />
+                Chat on WhatsApp
+              </button>
+            </div>
+          </div>
+
+          {/* Trust Badges */}
+          <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-8 shadow-xl hover:scale-105 transition-all duration-300">
+            <h4 className="text-xl font-bold text-white mb-6 text-center">Trusted By Thousands</h4>
+            <div className="grid grid-cols-2 gap-4">
+              {[
+                {
+                  value: "2,500+",
+                  label: "Happy Clients",
+                  color: "text-green-400",
+                  bg: "bg-green-500/10",
+                  border: "border-green-500/30"
+                },
+                {
+                  value: "50K+",
+                  label: "Reviews",
+                  color: "text-blue-400",
+                  bg: "bg-blue-500/10",
+                  border: "border-blue-500/30"
+                },
+                {
+                  value: "4.9",
+                  label: "Rating",
+                  color: "text-yellow-400",
+                  bg: "bg-yellow-500/10",
+                  border: "border-yellow-500/30"
+                },
+                {
+                  value: "24/7",
+                  label: "Support",
+                  color: "text-purple-400",
+                  bg: "bg-purple-500/10",
+                  border: "border-purple-500/30"
+                },
+              ].map((badge, i) => (
+                <div
+                  key={i}
+                  className={`p-4 ${badge.bg} border ${badge.border} rounded-xl hover:scale-110 transition-all duration-300 group/badge`}
+                >
+                  <div className={`text-3xl font-bold ${badge.color} mb-1 group-hover/badge:scale-110 transition-transform`}>
+                    {badge.value}
+                  </div>
+                  <div className="text-xs text-slate-400">{badge.label}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
   );
 };
 

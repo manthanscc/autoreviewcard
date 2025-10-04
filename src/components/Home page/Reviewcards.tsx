@@ -149,7 +149,7 @@ export const Reviewcards: React.FC = () => {
   }, []);
 
   return (
-    <section className="py-20 bg-gradient-to-br from-purple-100 via-indigo-50 to-blue-100 relative overflow-hidden">
+    <section className="py-16 bg-gradient-to-br from-purple-100 via-indigo-50 to-blue-100 relative overflow-hidden">
       {/* Enhanced Decorative Background Elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         {/* Large Gradient Orbs */}

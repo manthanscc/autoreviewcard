@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
   BrowserRouter as Router,
   Routes,
@@ -16,6 +16,7 @@ import Homepage from "./components/Home page/Homepage";
 import PrivacyPolicy from "./components/Policies/PrivacyPolicy";
 import TermsOfService from "./components/Policies/TermsOfService";
 import CookiePolicy from "./components/Policies/CookiePolicy";
+import { CustomerForm } from "./components/Home page/CustomerForm";
 
 ReactGA.initialize("G-YE1SGYY8P4"); // your measurement ID
 ReactGA.send("pageview");
@@ -49,6 +50,7 @@ function App() {
 
         {/* Dynamic Review Card Routes */}
         <Route path="/:slug" element={<DynamicReviewCard />} />
+        <Route path="/contact-form" element={<CustomerForm />} />
       </Routes>
     </Router>
   );

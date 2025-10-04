@@ -42,7 +42,7 @@ const solutionSteps = [
 
 export const Solution: React.FC = () => {
   return (
-    <section className="py-16 md:py-24 px-4 bg-gradient-to-br from-slate-50 via-white to-blue-50 relative overflow-hidden">
+    <section className="py-16 px-4 bg-gradient-to-br from-slate-50 via-white to-blue-50 relative overflow-hidden">
       <div className="absolute inset-0 bg-gradient-to-r from-blue-50/30 via-purple-50/20 to-pink-50/30"></div>
       
       <div className="max-w-7xl mx-auto relative">
@@ -242,7 +242,8 @@ export const Solution: React.FC = () => {
         </div>
       </div>
 
-      <style jsx>{`
+      <style>
+        {`
         @keyframes fadeInScale {
           from {
             opacity: 0;
@@ -253,7 +254,8 @@ export const Solution: React.FC = () => {
             transform: scale(1) translateY(0);
           }
         }
-      `}</style>
+        `}
+      </style>
     </section>
   );
 };

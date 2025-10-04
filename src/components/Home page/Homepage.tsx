@@ -47,6 +47,7 @@ function App() {
       <CustomerSuccess />
       <FAQSection />
       <ContactForm />
+      
       <Footer />
     </div>
   );

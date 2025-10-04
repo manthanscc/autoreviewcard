@@ -81,7 +81,7 @@ const industries = [
 
 export const Industries: React.FC = () => {
   return (
-    <section className="py-24 px-4 bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 relative overflow-hidden">
+    <section className="py-16 px-4 bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 relative overflow-hidden">
       {/* Enhanced Decorative Background Elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         {/* Large Gradient Orbs */}

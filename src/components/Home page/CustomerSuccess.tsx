@@ -78,7 +78,7 @@ export const CustomerSuccess: React.FC = () => {
   const activeCase = caseStudies[caseIndex];
 
   return (
-    <section className="py-28 px-4 bg-gradient-to-br from-slate-50 via-white to-emerald-50 relative overflow-hidden">
+    <section className="py-16 px-4 bg-gradient-to-br from-slate-50 via-white to-emerald-50 relative overflow-hidden">
       {/* Decorative blobs */}
       <div className="pointer-events-none absolute -top-32 -left-32 w-[32rem] h-[32rem] bg-emerald-200/30 rounded-full blur-3xl"></div>
       <div className="pointer-events-none absolute -bottom-40 -right-28 w-[30rem] h-[30rem] bg-indigo-200/30 rounded-full blur-3xl"></div>
@@ -96,7 +96,7 @@ export const CustomerSuccess: React.FC = () => {
             </span>
           </h2>
           <p className="text-lg md:text-xl text-slate-600 max-w-3xl mx-auto animate-fade-in-up animation-delay-400">
-            Real growth outcomes delivered through AI‑powered review automation.
+            Real growth outcomes delivered through AI-powered review automation.
           </p>
         </div>
 
