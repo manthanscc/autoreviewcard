@@ -150,9 +150,80 @@ export const Reviewcards: React.FC = () => {
 
   return (
     <section className="py-20 bg-gradient-to-br from-purple-100 via-indigo-50 to-blue-100 relative overflow-hidden">
-      {/* Decorative background elements */}
-      <div className="pointer-events-none absolute -top-20 -left-20 w-64 h-64 bg-purple-300/20 rounded-full blur-3xl"></div>
-      <div className="pointer-events-none absolute -bottom-32 -right-32 w-96 h-96 bg-blue-300/20 rounded-full blur-3xl"></div>
+      {/* Enhanced Decorative Background Elements */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        {/* Large Gradient Orbs */}
+        <div className="absolute -top-20 -left-20 w-64 h-64 bg-purple-300/30 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute -bottom-32 -right-32 w-96 h-96 bg-blue-300/30 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
+        <div className="absolute top-1/3 right-1/4 w-72 h-72 bg-indigo-300/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }}></div>
+        <div className="absolute bottom-1/4 left-1/3 w-80 h-80 bg-pink-300/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1.5s' }}></div>
+
+        {/* Floating Dots Pattern */}
+        <div
+          className="absolute top-20 right-32 w-2 h-2 bg-purple-400 rounded-full opacity-80 animate-bounce shadow-[0_0_18px_8px_rgba(192,132,252,0.6)]"
+          style={{ animationDelay: '0s', animationDuration: '3s' }}
+        ></div>
+        <div
+          className="absolute top-40 right-48 w-2 h-2 bg-blue-400 rounded-full opacity-80 animate-bounce shadow-[0_0_18px_8px_rgba(96,165,250,0.55)]"
+          style={{ animationDelay: '0.5s', animationDuration: '3.5s' }}
+        ></div>
+        <div
+          className="absolute top-60 right-40 w-2 h-2 bg-indigo-400 rounded-full opacity-80 animate-bounce shadow-[0_0_18px_8px_rgba(129,140,248,0.55)]"
+          style={{ animationDelay: '1s', animationDuration: '4s' }}
+        ></div>
+        <div
+          className="absolute bottom-32 left-24 w-2 h-2 bg-pink-400 rounded-full opacity-80 animate-bounce shadow-[0_0_18px_8px_rgba(244,114,182,0.6)]"
+          style={{ animationDelay: '0.3s', animationDuration: '3.2s' }}
+        ></div>
+        <div
+          className="absolute bottom-48 left-40 w-2 h-2 bg-purple-400 rounded-full opacity-80 animate-bounce shadow-[0_0_18px_8px_rgba(192,132,252,0.6)]"
+          style={{ animationDelay: '0.8s', animationDuration: '3.8s' }}
+        ></div>
+        
+        {/* QR Code Icons Pattern */}
+        <div className="absolute top-24 left-16 opacity-10">
+          <QrCode className="w-12 h-12 text-purple-600" />
+        </div>
+        <div className="absolute top-1/2 right-20 opacity-10">
+          <QrCode className="w-16 h-16 text-blue-600" />
+        </div>
+        <div className="absolute bottom-24 left-1/4 opacity-10">
+          <QrCode className="w-10 h-10 text-indigo-600" />
+        </div>
+        
+        {/* Star Icons Pattern */}
+        <div className="absolute top-32 right-1/4 opacity-15">
+          <Star className="w-10 h-10 text-yellow-500 fill-yellow-400" />
+        </div>
+        <div className="absolute bottom-40 right-32 opacity-15">
+          <Star className="w-10 h-10 text-yellow-500 fill-yellow-400" />
+        </div>
+        <div className="absolute top-1/3 left-20 opacity-15">
+          <Star className="w-10 h-10 text-yellow-500 fill-yellow-400" />
+        </div>
+
+        {/* Grid Pattern Overlay */}
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,#8080800a_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] bg-[size:4rem_4rem]"></div>
+        
+        {/* Animated Gradient Lines */}
+        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-purple-500 to-transparent opacity-30 animate-[shimmer_3s_ease-in-out_infinite]"></div>
+        <div className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-blue-500 to-transparent opacity-30 animate-[shimmer_3s_ease-in-out_infinite]" style={{ animationDelay: '1.5s' }}></div>
+        
+        {/* Diagonal Lines */}
+        <div className="absolute top-0 left-0 w-px h-full bg-gradient-to-b from-transparent via-purple-300/30 to-transparent" style={{ left: '20%' }}></div>
+        <div className="absolute top-0 left-0 w-px h-full bg-gradient-to-b from-transparent via-blue-300/30 to-transparent" style={{ left: '80%' }}></div>
+        
+        {/* Sparkles Effect */}
+        <div className="absolute top-1/4 left-1/2 opacity-20">
+          <Sparkles className="w-8 h-8 text-purple-500 animate-pulse" />
+        </div>
+        <div className="absolute bottom-1/3 right-1/3 opacity-20">
+          <Sparkles className="w-6 h-6 text-blue-500 animate-pulse" style={{ animationDelay: '0.5s' }} />
+        </div>
+        
+        {/* Radial Gradient Overlay */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1200px] h-[1200px] bg-gradient-radial from-white/40 via-transparent to-transparent rounded-full"></div>
+      </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
         <div className="text-center mb-16 animate-fade-in-up">
@@ -249,7 +320,6 @@ export const Reviewcards: React.FC = () => {
                 <div className="pointer-events-none absolute -top-10 -right-10 w-40 h-40 bg-blue-300/30 rounded-full blur-2xl" />
 
                 <h3 className="text-xl font-bold text-slate-900 mb-6 flex items-center gap-2">
-                  {/* <Sparkles className="w-5 h-5 text-blue-600" /> */}
                   AI Review Generator
                 </h3>
 
