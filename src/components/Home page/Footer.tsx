@@ -97,7 +97,7 @@ export const Footer: React.FC = () => {
                 SCC Infotech
                 </div>
               </div>
-              <Send className="w-4 h-4 text-slate-400 ml-2 transition-transform duration-300 group-hover:translate-x-1 group-hover:text-white" />
+              {/* <Send className="w-4 h-4 text-slate-400 ml-2 transition-transform duration-300 group-hover:translate-x-1 group-hover:text-white" /> */}
               </a>
             </div>
           </div>
