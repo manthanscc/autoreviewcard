@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import Header from "./Header";
 import ContactForm from "./ContactForm";
 import Footer from "./Footer";
 import FAQSection from "./faq";
@@ -32,22 +33,30 @@ function App() {
 
   return (
     <div className="min-h-screen bg-white overflow-x-hidden">
+      {/* <Header /> */}
       <WhatsAppButton phoneNumber="9426479677" />
 
       <Heropage isVisible={isVisible} scrollToContact={scrollToContact} />
-      <Features />
+      <div id="features">
+        <Features />
+      </div>
 
-      
       <Reviewcards />
       <Solution />
-      <Industries />
+      <div id="industries">
+        <Industries />
+      </div>
       <Problem />
       {/* <Pricing /> */}
-      <Testimonials />
+      <div id="testimonials">
+        <Testimonials />
+      </div>
       <CustomerSuccess />
-      <FAQSection />
+      <div id="faq">
+        <FAQSection />
+      </div>
       <ContactForm />
-      
+
       <Footer />
     </div>
   );

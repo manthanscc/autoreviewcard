@@ -11,6 +11,9 @@ import {
   Shield,
 } from "lucide-react";
 
+const WHATSAPP_NUMBER = "9426479677";
+const WHATSAPP_MESSAGE = "Hey there! I'd love to explore your AI Review System and see how it can boost my business reviews and visibility.";
+
 const features = [
   {
     icon: CheckCircle,
@@ -39,6 +42,13 @@ export const ContactForm: React.FC = () => {
 
   const handleStartNow = () => {
     navigate("/contact-form");
+  };
+
+  const handleWhatsAppClick = () => {
+    window.open(
+      `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(WHATSAPP_MESSAGE)}`,
+      "_blank"
+    );
   };
 
   return (
@@ -182,9 +192,7 @@ export const ContactForm: React.FC = () => {
                 <span className="text-green-400 font-bold">5 minutes</span>!
               </p>
               <button
-                onClick={() =>
-                  window.open("https://wa.me/9426479677", "_blank")
-                }
+                onClick={handleWhatsAppClick}
                 className="w-full bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white px-6 py-4 rounded-xl font-bold text-lg transition-all duration-300 flex items-center justify-center gap-3 hover:scale-105 shadow-lg"
               >
                 <MessageCircle className="w-6 h-6" />

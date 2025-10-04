@@ -55,6 +55,7 @@ const categories = [
 ];
 
 const WHATSAPP_NUMBER = "9426479677";
+const WHATSAPP_QUICK_MESSAGE = "Hey there! I'd love to explore your AI Review System and see how it can boost my business reviews and visibility.";
 
 const benefits = [
   {
@@ -604,7 +605,12 @@ export const CustomerForm: React.FC = () => {
                   </p>
                   <button
                     onClick={() =>
-                      window.open("https://wa.me/9426479677", "_blank")
+                      window.open(
+                        `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(
+                          WHATSAPP_QUICK_MESSAGE
+                        )}`,
+                        "_blank"
+                      )
                     }
                     className="w-full bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white px-6 py-3 rounded-xl font-semibold transition-all duration-300 flex items-center justify-center gap-3 transform hover:scale-105 hover:shadow-xl shadow-lg"
                   >

@@ -6,11 +6,20 @@ interface WhatsAppButtonProps {
   phoneNumber?: string;
 }
 
+const WHATSAPP_MESSAGE = "Hey there! I'd love to explore your AI Review System and see how it can boost my business reviews and visibility.";
+
 export const WhatsAppButton: React.FC<WhatsAppButtonProps> = ({ 
   phoneNumber = '9426479677' 
 }) => {
   const navigate = useNavigate();
   const [showTooltip, setShowTooltip] = useState({ form: false, whatsapp: false });
+
+  const handleWhatsAppClick = () => {
+    window.open(
+      `https://wa.me/${phoneNumber}?text=${encodeURIComponent(WHATSAPP_MESSAGE)}`,
+      '_blank'
+    );
+  };
 
   return (
     <>
@@ -81,7 +90,7 @@ export const WhatsAppButton: React.FC<WhatsAppButtonProps> = ({
         <div className="relative group">
           <button
             className="relative w-16 h-16 bg-gradient-to-br from-green-500 via-green-600 to-emerald-600 hover:from-green-600 hover:via-green-700 hover:to-emerald-700 rounded-2xl flex items-center justify-center shadow-2xl transition-all duration-500 ease-out hover:scale-110 hover:rotate-3 animate-float-delayed"
-            onClick={() => window.open(`https://wa.me/${phoneNumber}`, '_blank')}
+            onClick={handleWhatsAppClick}
             onMouseEnter={() => setShowTooltip({ ...showTooltip, whatsapp: true })}
             onMouseLeave={() => setShowTooltip({ ...showTooltip, whatsapp: false })}
             aria-label="Contact us on WhatsApp"
