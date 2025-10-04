@@ -28,38 +28,38 @@ export const WhatsAppButton: React.FC<WhatsAppButtonProps> = ({
         
         {/* Customer Form Button */}
         <div className="relative group">
-          <button
-            className="relative w-16 h-16 bg-gradient-to-br from-blue-500 via-blue-600 to-purple-600 hover:from-blue-600 hover:via-blue-700 hover:to-purple-700 rounded-2xl flex items-center justify-center shadow-2xl transition-all duration-500 ease-out hover:scale-110 hover:rotate-3 animate-float"
+            <button
+            className="relative w-16 h-16 bg-gradient-to-br from-amber-500 via-orange-600 to-rose-600 hover:from-amber-600 hover:via-orange-700 hover:to-rose-700 rounded-2xl flex items-center justify-center shadow-2xl transition-all duration-500 ease-out hover:scale-110 hover:rotate-3 animate-float"
             onClick={() => navigate('/contact-form')}
             onMouseEnter={() => setShowTooltip({ ...showTooltip, form: true })}
             onMouseLeave={() => setShowTooltip({ ...showTooltip, form: false })}
             aria-label="Open contact form"
-          >
+            >
             {/* Animated gradient border */}
-            <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 opacity-0 group-hover:opacity-100 blur-md transition-opacity duration-500 animate-gradient"></div>
+            <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-amber-400 via-orange-400 to-rose-400 opacity-0 group-hover:opacity-100 blur-md transition-opacity duration-500 animate-gradient"></div>
             
             {/* Pulsing ring */}
-            <div className="absolute inset-0 rounded-2xl bg-blue-400/30 animate-ping-slow"></div>
+            <div className="absolute inset-0 rounded-2xl bg-amber-400/30 animate-ping-slow"></div>
             
             {/* Glow effect */}
-            <div className="absolute inset-[-4px] rounded-2xl bg-gradient-to-r from-blue-500/50 to-purple-500/50 blur-xl opacity-60 group-hover:opacity-100 transition-opacity duration-500"></div>
+            <div className="absolute inset-[-4px] rounded-2xl bg-gradient-to-r from-amber-500/50 to-orange-500/50 blur-xl opacity-60 group-hover:opacity-100 transition-opacity duration-500"></div>
             
             {/* Icon container with subtle animation */}
             <div className="relative z-10 transform group-hover:scale-110 transition-transform duration-300">
               <img
-                src="/userpen.png"
-                alt="Contact Form"
-                className="w-9 h-9 object-contain drop-shadow-lg filter brightness-0 invert"
+              src="/logoW.png"
+              alt="Contact Form"
+              className="w-12 h-12"
               />
             </div>
             
             {/* Notification badge with pulse */}
             <div className="absolute -top-2 -right-2 z-20">
               <div className="relative">
-                <div className="absolute inset-0 bg-red-500 rounded-full animate-ping opacity-75"></div>
-                <div className="relative w-5 h-5 bg-gradient-to-br from-red-500 to-red-600 border-2 rounded-full flex items-center justify-center shadow-lg">
-                  <span className="text-xs font-bold text-white">!</span>
-                </div>
+              <div className="absolute inset-0 bg-red-500 rounded-full animate-ping opacity-75"></div>
+              <div className="relative w-5 h-5 bg-gradient-to-br from-red-500 to-red-600 border-2 rounded-full flex items-center justify-center shadow-lg">
+                <span className="text-xs font-bold text-white">!</span>
+              </div>
               </div>
             </div>
 
@@ -67,7 +67,7 @@ export const WhatsAppButton: React.FC<WhatsAppButtonProps> = ({
             <div className="absolute inset-0 rounded-2xl overflow-hidden">
               <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent translate-x-[-200%] group-hover:translate-x-[200%] transition-transform duration-1000 ease-in-out"></div>
             </div>
-          </button>
+            </button>
 
           {/* Enhanced Tooltip */}
           <div 

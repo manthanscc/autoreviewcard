@@ -275,12 +275,16 @@ export const CustomerSuccess: React.FC = () => {
                   (i + 1) * 100
                 }`}
               >
-                <div className="w-12 h-12 mb-5 rounded-xl bg-gradient-to-br from-emerald-50 to-indigo-50 flex items-center justify-center group-hover:scale-110 transition-transform">
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-50 to-indigo-50 flex items-center justify-center group-hover:scale-110 transition-transform">
                   <Icon className="w-5 h-5 text-emerald-600" />
-                </div>
-                <div className="text-2xl font-bold text-slate-900">{s.value}</div>
-                <div className="text-sm font-medium text-slate-500 mt-1">
-                  {s.label}
+                  </div>
+                  <div className="flex flex-col">
+                  <div className="text-2xl font-bold text-slate-900">{s.value}</div>
+                  <div className="text-sm font-medium text-slate-500 mt-1">
+                    {s.label}
+                  </div>
+                  </div>
                 </div>
                 <div className="absolute inset-x-0 bottom-0 h-1 opacity-0 group-hover:opacity-100 bg-gradient-to-r from-emerald-400 via-teal-400 to-indigo-400 rounded-b-2xl transition-opacity"></div>
               </div>
