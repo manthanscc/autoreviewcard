@@ -6,7 +6,7 @@ import {
   ArrowLeft,
   Sparkles,
   RefreshCw,
-  Eye
+  Eye,
 } from "lucide-react";
 import { ReviewCard } from "../types";
 import { StarRating } from "./StarRating";
@@ -69,16 +69,16 @@ export const CompactReviewCardView: React.FC<CompactReviewCardViewProps> = ({
       if (typeof next === "number") {
         setViewCount(next);
       } else {
-        setViewCount(v => v + 1);
+        setViewCount((v) => v + 1);
       }
-      })();
+    })();
   }, [card.id]);
 
   const generateReviewForRating = async (
     rating: number,
     language?: string,
     tone?: "Professional" | "Friendly" | "Casual" | "Grateful",
-    services?: string[]
+    services?: string[],
   ) => {
     setIsGenerating(true);
     try {
@@ -119,7 +119,7 @@ export const CompactReviewCardView: React.FC<CompactReviewCardViewProps> = ({
       rating,
       selectedLanguage,
       selectedTone,
-      selectedServices
+      selectedServices,
     );
   };
 
@@ -129,19 +129,19 @@ export const CompactReviewCardView: React.FC<CompactReviewCardViewProps> = ({
       selectedRating,
       language,
       selectedTone,
-      selectedServices
+      selectedServices,
     );
   };
 
   const handleToneChange = (
-    tone: "Professional" | "Friendly" | "Casual" | "Grateful"
+    tone: "Professional" | "Friendly" | "Casual" | "Grateful",
   ) => {
     setSelectedTone(tone);
     generateReviewForRating(
       selectedRating,
       selectedLanguage,
       tone,
-      selectedServices
+      selectedServices,
     );
   };
 
@@ -151,7 +151,7 @@ export const CompactReviewCardView: React.FC<CompactReviewCardViewProps> = ({
       selectedRating,
       selectedLanguage,
       selectedTone,
-      services
+      services,
     );
   };
 
@@ -160,26 +160,32 @@ export const CompactReviewCardView: React.FC<CompactReviewCardViewProps> = ({
       await navigator.clipboard.writeText(currentReview);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
-      
+
       // Check if device is mobile
-      const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-      
+      const isMobile =
+        /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+          navigator.userAgent,
+        );
+
       if (isMobile) {
         // Try to open Google Maps app first
-        const mapsAppUrl = card.googleMapsUrl.replace('https://maps.google.com', 'googlemaps://');
-        
+        const mapsAppUrl = card.googleMapsUrl.replace(
+          "https://maps.google.com",
+          "googlemaps://",
+        );
+
         // Create a temporary link to test if the app opens
-        const link = document.createElement('a');
+        const link = document.createElement("a");
         link.href = mapsAppUrl;
-        
+
         // Set a timeout to fallback to web version if app doesn't open
         const timeout = setTimeout(() => {
           window.location.href = card.googleMapsUrl;
         }, 1000);
-        
+
         // Try to open the app
         link.click();
-        
+
         // If we're still here after a short delay, the app likely opened
         setTimeout(() => {
           clearTimeout(timeout);
@@ -198,7 +204,7 @@ export const CompactReviewCardView: React.FC<CompactReviewCardViewProps> = ({
       selectedRating,
       selectedLanguage,
       selectedTone,
-      selectedServices
+      selectedServices,
     );
   };
 
@@ -220,7 +226,7 @@ export const CompactReviewCardView: React.FC<CompactReviewCardViewProps> = ({
 
     return (
       <blockquote className="text-gray-800 text-sm leading-relaxed">
-        "{currentReview}"
+        {currentReview}
       </blockquote>
     );
   };
@@ -334,7 +340,7 @@ export const CompactReviewCardView: React.FC<CompactReviewCardViewProps> = ({
                         | "Professional"
                         | "Friendly"
                         | "Casual"
-                        | "Grateful"
+                        | "Grateful",
                     )
                   }
                   size="sm"

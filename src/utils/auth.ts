@@ -1,7 +1,7 @@
 const AUTH_KEY = 'review_admin_auth';
 const FIXED_CREDENTIALS = {
-  mobile: '9974361416',
-  password: 'Scc#99743*/*61416&V/Y@'
+  mobile: import.meta.env.VITE_ADMIN_MOBILE as string,
+  password: import.meta.env.VITE_ADMIN_PASSWORD as string,
 };
 
 export const auth = {
