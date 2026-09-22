@@ -7,11 +7,6 @@ export const config = {
     anonKey: import.meta.env.VITE_SUPABASE_ANON_KEY || "",
   },
 
-  // AI Service Configuration
-  ai: {
-    sarvamApiKey: import.meta.env.VITE_SARVAM_API_KEY || "",
-  },
-
   // Netlify Configuration (for future use)
   netlify: {
     apiKey: import.meta.env.VITE_NETLIFY_API_KEY || "",
@@ -35,13 +30,6 @@ export const config = {
     );
   },
 
-  isSarvamConfigured(): boolean {
-    return !!(
-      this.ai.sarvamApiKey &&
-      this.ai.sarvamApiKey !== "your_sarvam_api_key_here"
-    );
-  },
-
   isNetlifyConfigured(): boolean {
     return !!(
       this.netlify.apiKey && this.netlify.apiKey !== "your_netlify_api_key_here"
@@ -55,7 +43,6 @@ if (config.app.isDevelopment) {
     supabase: config.isSupabaseConfigured()
       ? "✅ Configured"
       : "❌ Not configured",
-    sarvam: config.isSarvamConfigured() ? "✅ Configured" : "❌ Not configured",
     netlify: config.isNetlifyConfigured()
       ? "✅ Configured"
       : "❌ Not configured",

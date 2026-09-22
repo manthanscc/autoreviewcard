@@ -1,5 +1,3 @@
-import { config } from "./config";
-
 export interface ReviewRequest {
   businessName: string;
   category: string;
@@ -29,45 +27,34 @@ export interface GenerateReviewOptions {
 const usedReviewHashes = new Set<string>();
 
 export class AIReviewService {
-  // Call Sarvam API (with timeout — sarvam-105b can be slow)
+  // Call Sarvam through backend proxy (key stays on server)
   private async callSarvam(prompt: string): Promise<string> {
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 30000);
+    const timeoutId = setTimeout(() => controller.abort(), 35000);
 
     try {
-      const response = await fetch("https://api.sarvam.ai/v1/chat/completions", {
+      const response = await fetch("/api/sarvam", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "api-subscription-key": config.ai.sarvamApiKey,
         },
-        body: JSON.stringify({
-          model: "sarvam-105b",
-          messages: [{ role: "user", content: prompt }],
-          max_tokens: 120,
-          reasoning_effort: null,
-          temperature: 0.7,
-        }),
+        body: JSON.stringify({ prompt }),
         signal: controller.signal,
       });
 
-      if (!response.ok) {
-        const errorBody = await response.text();
+      const data = await response.json().catch(() => ({}));
+      const text = typeof data.text === "string" ? data.text.trim() : "";
+
+      if (!response.ok || !text) {
         throw new Error(
-          `Sarvam API error: ${response.status} ${response.statusText} — ${errorBody}`,
+          data.error || `AI proxy error: ${response.status} ${response.statusText}`,
         );
       }
 
-      const data = await response.json();
-      const message = data.choices?.[0]?.message;
-      const text = message?.content?.trim() || message?.reasoning_content?.trim();
-      if (!text) {
-        throw new Error("Sarvam API returned empty review content");
-      }
       return text;
     } catch (error) {
       if (error instanceof DOMException && error.name === "AbortError") {
-        throw new Error("Sarvam API timed out after 30 seconds");
+        throw new Error("AI request timed out after 35 seconds");
       }
       throw error;
     } finally {
@@ -126,12 +113,6 @@ export class AIReviewService {
     options: GenerateReviewOptions = {},
   ): Promise<GeneratedReview> {
     const { maxRetries = 2, existingHashes } = options;
-    // Check if Sarvam is configured
-    if (!config.isSarvamConfigured()) {
-      console.warn("Sarvam API not configured, using fallback review");
-      return this.getFallbackReview(request, existingHashes);
-    }
-
     const {
       businessName,
       category,
