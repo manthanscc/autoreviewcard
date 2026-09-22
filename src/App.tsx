@@ -1,9 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import {
   BrowserRouter as Router,
   Routes,
   Route,
-  Navigate,
 } from "react-router-dom";
 import ReactGA from "react-ga4";
 import { AdminDashboard } from "./components/AdminDashboard";
@@ -11,12 +10,12 @@ import { CompactReviewCardView } from "./components/CompactReviewCardView";
 import { LoginPage } from "./components/LoginPage";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import { storage } from "./utils/storage";
-import { auth } from "./utils/auth";
 import Homepage from "./components/Home page/Homepage";
 import PrivacyPolicy from "./components/Policies/PrivacyPolicy";
 import TermsOfService from "./components/Policies/TermsOfService";
 import CookiePolicy from "./components/Policies/CookiePolicy";
 import { CustomerForm } from "./components/Home page/CustomerForm";
+import { ReviewCard } from "./types";
 
 ReactGA.initialize("G-YE1SGYY8P4"); // your measurement ID
 ReactGA.send("pageview");
@@ -58,7 +57,7 @@ function App() {
 
 // Component to handle dynamic review card routing
 const DynamicReviewCard: React.FC = () => {
-  const [card, setCard] = React.useState(null);
+  const [card, setCard] = React.useState<ReviewCard | null>(null);
   const [loading, setLoading] = React.useState(true);
   const slug = window.location.pathname.slice(1); // Remove leading slash
 
