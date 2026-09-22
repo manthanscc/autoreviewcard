@@ -17,32 +17,81 @@ export interface GeneratedReview {
   hash: string;
   language: string;
   rating: number;
+  source: "ai" | "fallback";
+}
+
+export interface GenerateReviewOptions {
+  maxRetries?: number;
+  existingHashes?: Set<string>;
 }
 
 // Store used review hashes to prevent duplicates
 const usedReviewHashes = new Set<string>();
 
 export class AIReviewService {
-  // Call Sarvam API
+  // Call Sarvam API (with timeout — sarvam-105b can be slow)
   private async callSarvam(prompt: string): Promise<string> {
-    const response = await fetch("https://api.sarvam.ai/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "api-subscription-key": config.ai.sarvamApiKey,
-      },
-      body: JSON.stringify({
-        model: "sarvam-m",
-        messages: [{ role: "user", content: prompt }],
-      }),
-    });
-    if (!response.ok) {
-      throw new Error(
-        `Sarvam API error: ${response.status} ${response.statusText}`,
-      );
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 30000);
+
+    try {
+      const response = await fetch("https://api.sarvam.ai/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "api-subscription-key": config.ai.sarvamApiKey,
+        },
+        body: JSON.stringify({
+          model: "sarvam-105b",
+          messages: [{ role: "user", content: prompt }],
+          max_tokens: 120,
+          reasoning_effort: null,
+          temperature: 0.7,
+        }),
+        signal: controller.signal,
+      });
+
+      if (!response.ok) {
+        const errorBody = await response.text();
+        throw new Error(
+          `Sarvam API error: ${response.status} ${response.statusText} — ${errorBody}`,
+        );
+      }
+
+      const data = await response.json();
+      const message = data.choices?.[0]?.message;
+      const text = message?.content?.trim() || message?.reasoning_content?.trim();
+      if (!text) {
+        throw new Error("Sarvam API returned empty review content");
+      }
+      return text;
+    } catch (error) {
+      if (error instanceof DOMException && error.name === "AbortError") {
+        throw new Error("Sarvam API timed out after 30 seconds");
+      }
+      throw error;
+    } finally {
+      clearTimeout(timeoutId);
     }
-    const data = await response.json();
-    return data.choices[0].message.content.trim();
+  }
+
+  private trimReview(text: string, maxChars = 200): string {
+    const cleaned = text.replace(/^["']|["']$/g, "").trim();
+    if (cleaned.length <= maxChars) return cleaned;
+
+    const truncated = cleaned.slice(0, maxChars);
+    const lastStop = Math.max(
+      truncated.lastIndexOf("."),
+      truncated.lastIndexOf("!"),
+      truncated.lastIndexOf("?"),
+      truncated.lastIndexOf("।"),
+    );
+
+    if (lastStop > maxChars * 0.5) {
+      return truncated.slice(0, lastStop + 1).trim();
+    }
+
+    return truncated.trim();
   }
 
   // Generate a simple hash for review content
@@ -56,13 +105,17 @@ export class AIReviewService {
     return Math.abs(hash).toString(36);
   }
 
-  // Check if review is unique
-  private isReviewUnique(content: string): boolean {
+  // Check if review is unique (session + database hashes)
+  private isReviewUnique(
+    content: string,
+    existingHashes?: Set<string>,
+  ): boolean {
     const hash = this.generateHash(content);
+    if (existingHashes?.has(hash)) return false;
     return !usedReviewHashes.has(hash);
   }
 
-  // Mark review as used
+  // Mark review as used in current session
   private markReviewAsUsed(content: string): void {
     const hash = this.generateHash(content);
     usedReviewHashes.add(hash);
@@ -70,12 +123,13 @@ export class AIReviewService {
 
   async generateReview(
     request: ReviewRequest,
-    maxRetries: number = 5,
+    options: GenerateReviewOptions = {},
   ): Promise<GeneratedReview> {
+    const { maxRetries = 2, existingHashes } = options;
     // Check if Sarvam is configured
     if (!config.isSarvamConfigured()) {
       console.warn("Sarvam API not configured, using fallback review");
-      return this.getFallbackReview(request);
+      return this.getFallbackReview(request, existingHashes);
     }
 
     const {
@@ -164,40 +218,35 @@ Use Case: ${selectedUseCase} - ${useCaseInstructions[selectedUseCase]}
 ${highlights ? `Customer highlights: ${highlights}` : ""}
 ${serviceInstructions}
 
-Requirements:
--give small review(200 char) in 2-6 sentences maximum
-- Write 3-5 sentences maximum
-- First sentence always different
-- ${businessName} is shown always different place in review
-- Sound natural and human-like with regional authenticity
-- Match the ${starRating}-star sentiment exactly
-- Be specific to the business type (${type}) and category (${category})
-- Use realistic customer language for ${selectedUseCase}
-- No fake exaggeration, keep it credible and locally relevant
-- Don't mention the star rating in the text
-- Make it unique - avoid common phrases or structures
-- Use varied sentence structures and vocabulary
-${highlights ? `- Try to incorporate these highlights naturally: ${highlights}` : ""}
-${selectedServices && selectedServices.length > 0 ? `- Naturally incorporate these service experiences: ${selectedServices.join(", ")}` : ""}
-${selectedServices && selectedServices.length > 0 ? `- Naturally incorporate these service experiences: ${selectedServices.join(", ")}` : ""}
-- ${languageInstruction}
-- For mixed languages, ensure both languages flow naturally together
-- Use authentic regional expressions and terminology
-- Avoid generic templates or repetitive structures
+STRICT LENGTH RULE (most important):
+- Write EXACTLY 2-3 short sentences only
+- Maximum 200 characters total — never exceed this
+- Keep it concise like a real Google Maps review, not an essay
 
-Return only the review text, no quotes or extra formatting.`;
+Other requirements:
+- Mention "${businessName}" once, naturally
+- Sound human, simple, and authentic
+- Match the ${starRating}-star sentiment
+- Be specific to ${type} / ${category}
+- Don't mention star rating in the text
+${highlights ? `- Include briefly: ${highlights}` : ""}
+${selectedServices && selectedServices.length > 0 ? `- Mention 1-2 of these only: ${selectedServices.slice(0, 2).join(", ")}` : ""}
+- ${languageInstruction}
+
+Return ONLY the review text. No quotes, labels, or extra formatting.`;
 
       try {
-        const reviewText = await this.callSarvam(prompt);
+        const reviewText = this.trimReview(await this.callSarvam(prompt));
 
         // Check if review is unique
-        if (this.isReviewUnique(reviewText)) {
+        if (this.isReviewUnique(reviewText, existingHashes)) {
           this.markReviewAsUsed(reviewText);
           return {
             text: reviewText,
             hash: this.generateHash(reviewText),
             language: selectedLanguage,
             rating: starRating,
+            source: "ai",
           };
         }
 
@@ -213,10 +262,13 @@ Return only the review text, no quotes or extra formatting.`;
     }
 
     // Fallback to unique hardcoded review if all attempts fail
-    return this.getFallbackReview(request);
+    return this.getFallbackReview(request, existingHashes);
   }
 
-  private getFallbackReview(request: ReviewRequest): GeneratedReview {
+  getFallbackReview(
+    request: ReviewRequest,
+    existingHashes?: Set<string>,
+  ): GeneratedReview {
     const {
       businessName,
       category,
@@ -280,15 +332,21 @@ Return only the review text, no quotes or extra formatting.`;
     const randomIndex = Math.floor(Math.random() * languageFallbacks.length);
     const selectedFallback = languageFallbacks[randomIndex];
     // Make it unique by adding timestamp-based variation
-    const uniqueFallback = `${selectedFallback} (${timestamp})`.replace(
-      ` (${timestamp})`,
-      "",
-    );
+    let uniqueFallback = selectedFallback;
+    let hash = this.generateHash(uniqueFallback);
+
+    if (existingHashes?.has(hash) || usedReviewHashes.has(hash)) {
+      uniqueFallback = `${selectedFallback} ${timestamp}`;
+      hash = this.generateHash(uniqueFallback);
+    }
+
+    this.markReviewAsUsed(uniqueFallback);
     return {
       text: uniqueFallback,
-      hash: this.generateHash(uniqueFallback + timestamp),
+      hash,
       language: langKey,
       rating: starRating,
+      source: "fallback",
     };
   }
 

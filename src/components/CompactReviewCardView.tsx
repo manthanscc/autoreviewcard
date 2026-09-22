@@ -40,6 +40,7 @@ export const CompactReviewCardView: React.FC<CompactReviewCardViewProps> = ({
   const [isGenerating, setIsGenerating] = useState(false);
   const [showAdvanced, setShowAdvanced] = useState(false);
   const [viewCount, setViewCount] = useState(card.viewCount ?? 0);
+  const [currentReviewId, setCurrentReviewId] = useState<string | null>(null);
 
   const languageOptions = ["English", "Gujarati", "Hindi"];
 
@@ -74,6 +75,32 @@ export const CompactReviewCardView: React.FC<CompactReviewCardViewProps> = ({
     })();
   }, [card.id]);
 
+  const persistReview = async (
+    review: {
+      text: string;
+      hash: string;
+      language: string;
+      rating: number;
+      source: "ai" | "fallback";
+    },
+    rating: number,
+    language: string,
+    tone: "Professional" | "Friendly" | "Casual" | "Grateful",
+    services: string[],
+  ) => {
+    const saved = await storage.saveGeneratedReview({
+      reviewCardId: card.id,
+      reviewText: review.text,
+      contentHash: review.hash,
+      starRating: rating,
+      language,
+      tone,
+      selectedServices: services,
+      source: review.source,
+    });
+    setCurrentReviewId(saved?.id ?? null);
+  };
+
   const generateReviewForRating = async (
     rating: number,
     language?: string,
@@ -81,33 +108,62 @@ export const CompactReviewCardView: React.FC<CompactReviewCardViewProps> = ({
     services?: string[],
   ) => {
     setIsGenerating(true);
+    const resolvedLanguage = language || selectedLanguage;
+    const resolvedTone = tone || selectedTone;
+    const resolvedServices = services || selectedServices;
+
     try {
-      const review = await aiService.generateReview({
-        businessName: card.businessName,
-        category: card.category,
-        type: card.type,
-        highlights: card.description,
-        selectedServices: services || selectedServices,
-        starRating: rating,
-        language: language || selectedLanguage,
-        tone: tone || selectedTone,
-        useCase: "Customer review",
-      });
+      const existingHashes = await Promise.race([
+        storage.getReviewHashesByCardId(card.id),
+        new Promise<Set<string>>((resolve) =>
+          setTimeout(() => resolve(new Set()), 3000),
+        ),
+      ]);
+
+      const review = await aiService.generateReview(
+        {
+          businessName: card.businessName,
+          category: card.category,
+          type: card.type,
+          highlights: card.description,
+          selectedServices: resolvedServices,
+          starRating: rating,
+          language: resolvedLanguage,
+          tone: resolvedTone,
+          useCase: "Customer review",
+        },
+        { existingHashes },
+      );
       setCurrentReview(review.text);
+      void persistReview(
+        review,
+        rating,
+        resolvedLanguage,
+        resolvedTone,
+        resolvedServices,
+      );
     } catch (error) {
       console.error("Failed to generate review:", error);
-      // Use contextual fallback review
-      const fallbackReview = aiService.getFallbackReview({
-        businessName: card.businessName,
-        category: card.category,
-        type: card.type,
-        selectedServices: services || selectedServices,
-        starRating: rating,
-        language: language || selectedLanguage,
-        tone: tone || selectedTone,
-        useCase: "Customer review",
-      });
-      setCurrentReview(fallbackReview);
+      const fallbackReview = aiService.getFallbackReview(
+        {
+          businessName: card.businessName,
+          category: card.category,
+          type: card.type,
+          selectedServices: resolvedServices,
+          starRating: rating,
+          language: resolvedLanguage,
+          tone: resolvedTone,
+          useCase: "Customer review",
+        },
+      );
+      setCurrentReview(fallbackReview.text);
+      void persistReview(
+        fallbackReview,
+        rating,
+        resolvedLanguage,
+        resolvedTone,
+        resolvedServices,
+      );
     } finally {
       setIsGenerating(false);
     }
@@ -158,6 +214,9 @@ export const CompactReviewCardView: React.FC<CompactReviewCardViewProps> = ({
   const handleCopyAndRedirect = async () => {
     try {
       await navigator.clipboard.writeText(currentReview);
+      if (currentReviewId) {
+        await storage.markReviewCopied(currentReviewId);
+      }
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
 

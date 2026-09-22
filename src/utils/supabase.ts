@@ -107,9 +107,33 @@ export interface Database {
           slug?: string;
           logo_url?: string | null;
           google_maps_url?: string;
-          tagline?: string | null; // <--- added
+          tagline?: string | null;
+          view_count?: number;
           created_at?: string;
           updated_at?: string;
+        };
+      };
+      generated_reviews: {
+        Row: {
+          id: string;
+          review_card_id: string;
+          content_hash: string;
+          review_data: Record<string, unknown>;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          review_card_id: string;
+          content_hash: string;
+          review_data: Record<string, unknown>;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          review_card_id?: string;
+          content_hash?: string;
+          review_data?: Record<string, unknown>;
+          created_at?: string;
         };
       };
     };

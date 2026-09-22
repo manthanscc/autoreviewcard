@@ -63,77 +63,150 @@ export const Reviewcards: React.FC = () => {
   const [reviewText, setReviewText] = useState("");
   const [copied, setCopied] = useState(false);
 
+  const pickRandom = <T,>(items: T[]): T =>
+    items[Math.floor(Math.random() * items.length)];
+
   const toggleService = (s: string) => {
-    setSelectedServices((prev) =>
-      prev.includes(s) ? prev.filter((x) => x !== s) : [...prev, s]
-    );
+    setSelectedServices((prev) => {
+      const next = prev.includes(s)
+        ? prev.filter((x) => x !== s)
+        : [...prev, s];
+      return next;
+    });
   };
 
-  const generateReview = () => {
-    const picked = selectedServices.slice(0, 3).join(", ") || "service";
+  const generateReview = (
+    lang = selectedLanguage,
+    stars = rating,
+    services = selectedServices,
+  ) => {
+    const picked = services.slice(0, 3).join(", ") || "service";
 
-    if (selectedLanguage === "Gujarati") {
-      const adjectivesGuj: Record<number, string> = {
-        5: "ઉત્કૃષ્ટ, સરળ અને ખરેખર પ્રભાવશાળી",
-        4: "ખૂબ જ સારી અને વિશ્વસનીય",
-        3: "એકંદરે સારી છે પરંતુ સુધારણાની જરૂર છે",
-        2: "આ વખતે અપેક્ષા કરતાં ઓછું",
-        1: "નિરાશાજનક",
+    if (lang === "Gujarati") {
+      const openings = [
+        `${biz.name} સાથેનો અમારો અનુભવ`,
+        `${biz.location} માં ${biz.name} પાસેથી મળેલી સેવા`,
+        `અમે ${biz.name} નો સંપર્ક કર્યો અને અનુભવ`,
+      ];
+      const adjectivesGuj: Record<number, string[]> = {
+        5: ["ઉત્કૃષ્ટ, સરળ અને ખરેખર પ્રભાવશાળી", "અદ્ભુત અને ખૂબ જ સંતોષકારક"],
+        4: ["ખૂબ જ સારી અને વિશ્વસનીય", "સારો અને વ્યાવસાયિક"],
+        3: ["એકંદરે સારી છે પરંતુ સુધારણાની જરૂર છે", "ઠીક-ઠાક, પણ વધુ સારું થઈ શકે"],
+        2: ["આ વખતે અપેક્ષા કરતાં ઓછું", "સરાસરથી નીચે"],
+        1: ["નિરાશાજનક", "અપેક્ષા પૂરી ન થઈ"],
       };
+      const middles = [
+        `તેમની ${picked} ખરેખર અલગ હતી.`,
+        `${picked} બાબતે તેમની સેવા ખાસ સારી રહી.`,
+        `ખાસ કરીને ${picked} માટે અમે ખુશ છીએ.`,
+      ];
+      const tails =
+        stars >= 4
+          ? [
+              " ગુણવત્તા અને વિશ્વાસની શોધમાં કોઈપણને ખૂબ ભલામણ કરું છું.",
+              " નિશ્ચિતપણે ફરી સંપર્ક કરીશું.",
+            ]
+          : stars === 3
+          ? [
+              " અમે માનીએ છીએ કે ભવિષ્યમાં સુધારાઓ તેને વધુ સારું બનાવશે.",
+              " સુધારા થાય તો વધુ સારું થશે.",
+            ]
+          : [
+              " આશા રાખું છું કે તેઓ ટૂંક સમયમાં આ મુદ્દાઓનું નિરાકરણ કરશે.",
+              " સુધારાની જરૂર છે.",
+            ];
 
-      const base = `${biz.name} સાથેનો અમારો અનુભવ ${adjectivesGuj[rating]} હતો. તેમની ${picked} ખરેખર અલગ હતી. ${biz.location} માં ટીમે સમગ્ર પ્રક્રિયાને સરળ અને વ્યાવસાયિક બનાવી.`;
-      const tail =
-        rating >= 4
-          ? " ગુણવત્તા અને વિશ્વાસની શોધમાં કોઈપણને ખૂબ ભલામણ કરું છું."
-          : rating === 3
-          ? " અમે માનીએ છીએ કે ભવિષ્યમાં સુધારાઓ તેને વધુ સારું બનાવશે."
-          : " આશા રાખું છું કે તેઓ ટૂંક સમયમાં આ મુદ્દાઓનું નિરાકરણ કરશે.";
-      setReviewText(`"${base}${tail}"`);
-    } else if (selectedLanguage === "Hindi") {
-      const adjectivesHin: Record<number, string> = {
-        5: "उत्कृष्ट, निर्बाध और वास्तव में प्रभावशाली",
-        4: "बहुत अच्छा और विश्वसनीय",
-        3: "कुल मिलाकर अच्छा लेकिन सुधार की गुंजाइश है",
-        2: "इस बार उम्मीद से कम",
-        1: "निराशाजनक",
+      setReviewText(
+        `"${pickRandom(openings)} ${pickRandom(adjectivesGuj[stars])} હતો. ${pickRandom(middles)} ${biz.location} માં ટીમે સમગ્ર પ્રક્રિયાને સરળ અને વ્યાવસાયિક બનાવી.${pickRandom(tails)}"`,
+      );
+    } else if (lang === "Hindi") {
+      const openings = [
+        `${biz.name} के साथ हमारा अनुभव`,
+        `${biz.location} में ${biz.name} से मिली सेवा`,
+        `हमने ${biz.name} को चुना और अनुभव`,
+      ];
+      const adjectivesHin: Record<number, string[]> = {
+        5: ["उत्कृष्ट, निर्बाध और वास्तव में प्रभावशाली", "बहुत बढ़िया और संतोषजनक"],
+        4: ["बहुत अच्छा और विश्वसनीय", "अच्छा और पेशेवर"],
+        3: ["कुल मिलाकर अच्छा लेकिन सुधार की गुंजाइश है", "ठीक-ठाक, और बेहतर हो सकता है"],
+        2: ["इस बार उम्मीद से कम", "औसत से नीचे"],
+        1: ["निराशाजनक", "उम्मीद के मुताबिक नहीं"],
       };
+      const middles = [
+        `उनकी ${picked} वास्तव में उत्कृष्ट थी।`,
+        `${picked} के मामले में उनकी सेवा काफी अच्छी रही।`,
+        `खासकर ${picked} हमें बहुत पसंद आया।`,
+      ];
+      const tails =
+        stars >= 4
+          ? [
+              " गुणवत्ता और विश्वास की तलाश करने वाले किसी भी व्यक्ति को अत्यधिक अनुशंसा करते हैं।",
+              " जरूर दोबारा संपर्क करेंगे।",
+            ]
+          : stars === 3
+          ? [
+              " हम मानते हैं कि भविष्य में सुधार इसे और बेहतर बना देंगे।",
+              " सुधार हो तो और अच्छा होगा।",
+            ]
+          : [
+              " आशा है कि वे जल्द ही इन मुद्दों का समाधान करेंगे।",
+              " सुधार की जरूरत है।",
+            ];
 
-      const base = `${biz.name} के साथ हमारा अनुभव ${adjectivesHin[rating]} था। उनकी ${picked} वास्तव में उत्कृष्ट थी। ${biz.location} में टीम ने पूरी प्रक्रिया को आसान और पेशेवर बना दिया।`;
-      const tail =
-        rating >= 4
-          ? " गुणवत्ता और विश्वास की तलाश करने वाले किसी भी व्यक्ति को अत्यधिक अनुशंसा करते हैं।"
-          : rating === 3
-          ? " हम मानते हैं कि भविष्य में सुधार इसे और बेहतर बना देंगे।"
-          : " आशा है कि वे जल्द ही इन मुद्दों का समाधान करेंगे।";
-      setReviewText(`"${base}${tail}"`);
+      setReviewText(
+        `"${pickRandom(openings)} ${pickRandom(adjectivesHin[stars])} था। ${pickRandom(middles)} ${biz.location} में टीम ने पूरी प्रक्रिया को आसान और पेशेवर बना दिया।${pickRandom(tails)}"`,
+      );
     } else {
-      // English
-      const adjectives: Record<number, string> = {
-        5: "outstanding, seamless and truly impressive",
-        4: "very good and reliable",
-        3: "good overall with room for improvement",
-        2: "below expectations this time",
-        1: "disappointing",
+      const openings = [
+        `Our experience with ${biz.name} was`,
+        `We chose ${biz.name} in ${biz.location} and the experience was`,
+        `Working with ${biz.name} felt`,
+      ];
+      const adjectives: Record<number, string[]> = {
+        5: ["outstanding, seamless and truly impressive", "excellent and very satisfying"],
+        4: ["very good and reliable", "solid and professional"],
+        3: ["good overall with room for improvement", "decent but could be better"],
+        2: ["below expectations this time", "underwhelming on this visit"],
+        1: ["disappointing", "not what we hoped for"],
       };
+      const middles = [
+        `Their ${picked} really stood out.`,
+        `We especially liked their ${picked}.`,
+        `The ${picked} was a highlight for us.`,
+      ];
+      const tails =
+        stars >= 4
+          ? [
+              " Highly recommend them to anyone looking for quality and trust.",
+              " We will definitely return.",
+            ]
+          : stars === 3
+          ? [
+              " We believe future enhancements will make it even better.",
+              " With a few improvements, this could be great.",
+            ]
+          : [
+              " Hoping they address these issues soon.",
+              " Improvement is needed.",
+            ];
 
-      const base = `Our experience with ${biz.name} was ${adjectives[rating]}. Their ${picked} really stood out. The team in ${biz.location} made the whole process easy and professional.`;
-      const tail =
-        rating >= 4
-          ? " Highly recommend them to anyone looking for quality and trust."
-          : rating === 3
-          ? " We believe future enhancements will make it even better."
-          : " Hoping they address these issues soon.";
-      setReviewText(`"${base}${tail}"`);
+      setReviewText(
+        `"${pickRandom(openings)} ${pickRandom(adjectives[stars])}. ${pickRandom(middles)} The team in ${biz.location} made the whole process easy and professional.${pickRandom(tails)}"`,
+      );
     }
 
     setCopied(false);
   };
 
   useEffect(() => {
-    generateReview();
     setSelectedServices([]);
     setRating(5);
+    generateReview(selectedLanguage, 5, []);
   }, [bizIndex, selectedLanguage]);
+
+  useEffect(() => {
+    generateReview(selectedLanguage, rating, selectedServices);
+  }, [selectedServices]);
 
   const copyReview = () => {
     navigator.clipboard.writeText(reviewText);
@@ -336,7 +409,7 @@ export const Reviewcards: React.FC = () => {
                           key={r}
                           onClick={() => {
                             setRating(r);
-                            generateReview();
+                            generateReview(selectedLanguage, r, selectedServices);
                           }}
                           className={`p-2 rounded-xl border transition ${
                             r <= rating

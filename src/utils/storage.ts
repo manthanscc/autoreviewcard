@@ -1,7 +1,8 @@
-import { ReviewCard } from '../types';
+import { ReviewCard, ReviewDataJson, SaveReviewInput, StoredReview } from '../types';
 import { supabase, isSupabaseConfigured } from './supabase';
 
 const STORAGE_KEY = 'scc_review_cards';
+const REVIEWS_STORAGE_KEY = 'scc_generated_reviews';
 
 // Helper function to validate UUID format
 const isValidUuid = (id: string): boolean => {
@@ -478,5 +479,265 @@ export const storage = {
   // Utility (optional) to total views
   getTotalViews(): number {
     return this._getLocalCards().reduce((sum, c) => sum + (c.viewCount ?? 0), 0);
+  },
+
+  // --- Generated reviews (per business) ---
+
+  _normalizeLocalReview(raw: Record<string, unknown>): StoredReview {
+    if (raw.reviewData && typeof raw.reviewData === 'object') {
+      return this._toStoredReview(
+        raw.id as string,
+        raw.reviewCardId as string,
+        raw.contentHash as string,
+        raw.reviewData as ReviewDataJson,
+        raw.createdAt as string,
+      );
+    }
+
+    return this._toStoredReview(
+      raw.id as string,
+      raw.reviewCardId as string,
+      raw.contentHash as string,
+      {
+        text: raw.reviewText as string,
+        starRating: raw.starRating as number,
+        language: raw.language as string,
+        tone: raw.tone as string | undefined,
+        selectedServices: (raw.selectedServices as string[]) || [],
+        source: raw.source as 'ai' | 'fallback',
+        wasCopied: Boolean(raw.wasCopied),
+      },
+      raw.createdAt as string,
+    );
+  },
+
+  _getLocalReviews(): StoredReview[] {
+    try {
+      const stored = localStorage.getItem(REVIEWS_STORAGE_KEY);
+      if (!stored) return [];
+      const parsed = JSON.parse(stored) as Record<string, unknown>[];
+      return parsed.map((row) => this._normalizeLocalReview(row));
+    } catch (error) {
+      console.error('Error reading reviews from localStorage:', error);
+      return [];
+    }
+  },
+
+  _saveLocalReviews(reviews: StoredReview[]): void {
+    try {
+      localStorage.setItem(REVIEWS_STORAGE_KEY, JSON.stringify(reviews));
+    } catch (error) {
+      console.error('Error saving reviews to localStorage:', error);
+    }
+  },
+
+  _buildReviewData(input: SaveReviewInput, wasCopied = false): ReviewDataJson {
+    return {
+      text: input.reviewText,
+      starRating: input.starRating,
+      language: input.language,
+      tone: input.tone,
+      selectedServices: input.selectedServices || [],
+      source: input.source,
+      wasCopied,
+    };
+  },
+
+  _toStoredReview(
+    id: string,
+    reviewCardId: string,
+    contentHash: string,
+    reviewData: ReviewDataJson,
+    createdAt: string,
+  ): StoredReview {
+    return {
+      id,
+      reviewCardId,
+      contentHash,
+      reviewData,
+      createdAt,
+      reviewText: reviewData.text,
+      starRating: reviewData.starRating,
+      language: reviewData.language,
+      tone: reviewData.tone,
+      selectedServices: reviewData.selectedServices,
+      source: reviewData.source,
+      wasCopied: reviewData.wasCopied,
+    };
+  },
+
+  _parseReviewData(row: Record<string, unknown>): ReviewDataJson {
+    // New JSON format
+    if (row.review_data && typeof row.review_data === 'object') {
+      const data = row.review_data as ReviewDataJson;
+      return {
+        text: data.text,
+        starRating: data.starRating,
+        language: data.language,
+        tone: data.tone,
+        selectedServices: data.selectedServices || [],
+        source: data.source,
+        wasCopied: Boolean(data.wasCopied),
+      };
+    }
+
+    // Legacy column format (backward compatibility)
+    return {
+      text: row.review_text as string,
+      starRating: row.star_rating as number,
+      language: row.language as string,
+      tone: (row.tone as string) || undefined,
+      selectedServices: (row.selected_services as string[]) || [],
+      source: row.source as 'ai' | 'fallback',
+      wasCopied: Boolean(row.was_copied),
+    };
+  },
+
+  _transformDbRowToReview(row: Record<string, unknown>): StoredReview {
+    const reviewData = this._parseReviewData(row);
+    return this._toStoredReview(
+      row.id as string,
+      row.review_card_id as string,
+      row.content_hash as string,
+      reviewData,
+      row.created_at as string,
+    );
+  },
+
+  _transformReviewToDbInsert(review: SaveReviewInput) {
+    return {
+      review_card_id: review.reviewCardId,
+      content_hash: review.contentHash,
+      review_data: this._buildReviewData(review),
+    };
+  },
+
+  async saveGeneratedReview(input: SaveReviewInput): Promise<StoredReview | null> {
+    const localReviews = this._getLocalReviews();
+    const existingLocal = localReviews.find(
+      (r) => r.reviewCardId === input.reviewCardId && r.contentHash === input.contentHash,
+    );
+    if (existingLocal) {
+      return existingLocal;
+    }
+
+    const localRecord = this._toStoredReview(
+      crypto.randomUUID(),
+      input.reviewCardId,
+      input.contentHash,
+      this._buildReviewData(input),
+      new Date().toISOString(),
+    );
+
+    localReviews.unshift(localRecord);
+    this._saveLocalReviews(localReviews);
+
+    if (isSupabaseConfigured() && supabase) {
+      try {
+        const { data, error } = await supabase
+          .from('generated_reviews')
+          .upsert([this._transformReviewToDbInsert(input)], {
+            onConflict: 'review_card_id,content_hash',
+            ignoreDuplicates: true,
+          })
+          .select('*')
+          .maybeSingle();
+
+        if (error) {
+          console.error('Error saving review to Supabase (kept in localStorage):', error);
+          return localRecord;
+        }
+
+        if (data) {
+          const saved = this._transformDbRowToReview(data);
+          const updatedLocal = localReviews.map((r) =>
+            r.id === localRecord.id ? saved : r,
+          );
+          this._saveLocalReviews(updatedLocal);
+          return saved;
+        }
+      } catch (error) {
+        console.error('Supabase review save failed (kept in localStorage):', error);
+      }
+    }
+
+    return localRecord;
+  },
+
+  async getReviewsByCardId(reviewCardId: string): Promise<StoredReview[]> {
+    if (isSupabaseConfigured() && supabase) {
+      try {
+        const { data, error } = await supabase
+          .from('generated_reviews')
+          .select('*')
+          .eq('review_card_id', reviewCardId)
+          .order('created_at', { ascending: false });
+
+        if (!error && data) {
+          const reviews = data.map((row) => this._transformDbRowToReview(row));
+          const otherReviews = this._getLocalReviews().filter(
+            (r) => r.reviewCardId !== reviewCardId,
+          );
+          this._saveLocalReviews([...reviews, ...otherReviews]);
+          return reviews;
+        }
+
+        if (error) {
+          console.error('Error fetching reviews from Supabase:', error);
+        }
+      } catch (error) {
+        console.error('Supabase review fetch failed:', error);
+      }
+    }
+
+    return this._getLocalReviews().filter((r) => r.reviewCardId === reviewCardId);
+  },
+
+  async getReviewHashesByCardId(reviewCardId: string): Promise<Set<string>> {
+    const reviews = await this.getReviewsByCardId(reviewCardId);
+    return new Set(reviews.map((r) => r.contentHash));
+  },
+
+  async markReviewCopied(reviewId: string): Promise<void> {
+    const localReviews = this._getLocalReviews();
+    const index = localReviews.findIndex((r) => r.id === reviewId);
+    if (index !== -1) {
+      const updatedData = { ...localReviews[index].reviewData, wasCopied: true };
+      localReviews[index] = this._toStoredReview(
+        localReviews[index].id,
+        localReviews[index].reviewCardId,
+        localReviews[index].contentHash,
+        updatedData,
+        localReviews[index].createdAt,
+      );
+      this._saveLocalReviews(localReviews);
+    }
+
+    if (isSupabaseConfigured() && supabase) {
+      try {
+        const { data: row, error: fetchError } = await supabase
+          .from('generated_reviews')
+          .select('review_data')
+          .eq('id', reviewId)
+          .maybeSingle();
+
+        if (fetchError || !row?.review_data) {
+          console.error('Failed to fetch review for copy update:', fetchError);
+          return;
+        }
+
+        const updatedData = {
+          ...(row.review_data as ReviewDataJson),
+          wasCopied: true,
+        };
+
+        await supabase
+          .from('generated_reviews')
+          .update({ review_data: updatedData })
+          .eq('id', reviewId);
+      } catch (error) {
+        console.error('Failed to mark review as copied in Supabase:', error);
+      }
+    }
   },
 };
