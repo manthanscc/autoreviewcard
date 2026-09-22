@@ -305,26 +305,32 @@ Return ONLY the review text. No quotes, labels, or extra formatting.`;
       },
     };
 
-    // Select random fallback from available options
     const ratingFallbacks = fallbacks[starRating] || fallbacks[5];
     const langKey =
       language && ratingFallbacks[language] ? language : "English";
     const languageFallbacks = ratingFallbacks[langKey];
-    const randomIndex = Math.floor(Math.random() * languageFallbacks.length);
-    const selectedFallback = languageFallbacks[randomIndex];
-    // Make it unique by adding timestamp-based variation
-    let uniqueFallback = selectedFallback;
-    let hash = this.generateHash(uniqueFallback);
 
-    if (existingHashes?.has(hash) || usedReviewHashes.has(hash)) {
-      uniqueFallback = `${selectedFallback} ${timestamp}`;
-      hash = this.generateHash(uniqueFallback);
+    const candidates = [...languageFallbacks].sort(() => Math.random() - 0.5);
+    for (const candidate of candidates) {
+      const hash = this.generateHash(candidate);
+      if (!existingHashes?.has(hash) && !usedReviewHashes.has(hash)) {
+        this.markReviewAsUsed(candidate);
+        return {
+          text: candidate,
+          hash,
+          language: langKey,
+          rating: starRating,
+          source: "fallback",
+        };
+      }
     }
 
-    this.markReviewAsUsed(uniqueFallback);
+    // All templates used — keep text clean; timestamp only for DB hash uniqueness
+    const fallbackText = candidates[0];
+    this.markReviewAsUsed(fallbackText);
     return {
-      text: uniqueFallback,
-      hash,
+      text: fallbackText,
+      hash: this.generateHash(`${fallbackText}:${timestamp}`),
       language: langKey,
       rating: starRating,
       source: "fallback",
