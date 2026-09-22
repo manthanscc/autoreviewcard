@@ -1,23 +1,52 @@
-const AUTH_KEY = 'review_admin_auth';
-const FIXED_CREDENTIALS = {
-  mobile: import.meta.env.VITE_ADMIN_MOBILE as string,
-  password: import.meta.env.VITE_ADMIN_PASSWORD as string,
-};
+import { Session } from '@supabase/supabase-js';
+import { supabase, isSupabaseConfigured } from './supabase';
 
 export const auth = {
-  login(mobile: string, password: string): boolean {
-    if (mobile === FIXED_CREDENTIALS.mobile && password === FIXED_CREDENTIALS.password) {
-      sessionStorage.setItem(AUTH_KEY, 'true');
-      return true;
+  async login(email: string, password: string): Promise<{ success: boolean; error?: string }> {
+    if (!isSupabaseConfigured() || !supabase) {
+      return { success: false, error: 'Supabase is not configured' };
     }
-    return false;
+
+    const { error } = await supabase.auth.signInWithPassword({
+      email: email.trim(),
+      password,
+    });
+
+    if (error) {
+      return { success: false, error: error.message };
+    }
+
+    return { success: true };
   },
 
-  logout(): void {
-    sessionStorage.removeItem(AUTH_KEY);
+  async logout(): Promise<void> {
+    if (supabase) {
+      await supabase.auth.signOut();
+    }
   },
 
-  isAuthenticated(): boolean {
-    return sessionStorage.getItem(AUTH_KEY) === 'true';
-  }
+  async getSession(): Promise<Session | null> {
+    if (!supabase) return null;
+    const { data } = await supabase.auth.getSession();
+    return data.session;
+  },
+
+  async isAuthenticated(): Promise<boolean> {
+    const session = await this.getSession();
+    return !!session;
+  },
+
+  onAuthStateChange(callback: (authenticated: boolean) => void) {
+    if (!supabase) {
+      return { unsubscribe: () => undefined };
+    }
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      (_event, session) => {
+        callback(!!session);
+      },
+    );
+
+    return subscription;
+  },
 };

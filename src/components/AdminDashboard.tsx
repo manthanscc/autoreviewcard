@@ -150,8 +150,8 @@ export const AdminDashboard: React.FC = () => {
     window.open(`/${slug}`, '_blank');
   };
 
-  const handleLogout = () => {
-    auth.logout();
+  const handleLogout = async () => {
+    await auth.logout();
     window.location.href = '/login';
   };
 
